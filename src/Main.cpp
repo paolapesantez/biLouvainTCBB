@@ -8,7 +8,7 @@
 // Pesantez, Paola and Kalyanaraman, Ananth, "Detecting Communities in Biological 
 // Bipartite Networks," Proc. ACM Conference on Bioinformatics, Computational Biology, 
 // and Health Informatics (ACM-BCB), Seattle, WA, October 2-5, 2016, In press, 
-// DOI: https://...
+// DOI: http://dx.doi.org/10.1145/2975167.2975177.
 //
 // **************************************************************************************************
 // Copyright (c) 2016. Washington State University ("WSU"). All Rights Reserved. 
