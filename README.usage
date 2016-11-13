@@ -1,81 +1,79 @@
-================================================================  biLouvain  ========================================================================
+================================================================  biLouvain  ===========================================================
 
-	Authors: Paola Pesantez-Cabrera and Ananth Kalyanaraman
-	 © Washington State University. All rights reserved. 2016
+Authors: Paola Pesantez-Cabrera and Ananth Kalyanaraman
+ Â© Washington State University. All rights reserved. 2016
 
+biLouvain is an algorithm for detecting communities in bipartite networks through optimization of a modularity metric.
+For details regarding the algorithmic approach and the modularity metric that defines quality of of the resultant communities,
+we urge you to refer to our paper: 
+				  P. Pesantez, A. Kalyanaraman. Detecting Communities in Biological Bipartite Networks.
+				  Proc. ACM Conference on Bioinformatics, Computational Biology, and Health Informatics (ACM-BCB), 
+				  In Press, 2016.
 
-	biLouvain is an algorithm for detecting communities in bipartite networks through optimization of a modularity metric.
-	For details regarding the algorithmic approach and the modularity metric that defines quality of of the resultant communities,
-	we urge you to refer to our paper: 
-					  P. Pesantez, A. Kalyanaraman. Detecting Communities in Biological Bipartite Networks.
-					  Proc. ACM Conference on Bioinformatics, Computational Biology, and Health Informatics (ACM-BCB), 
-					  In Press, 2016.
+Generate Executable:
+	We provide a makefile inside /src folder so you can compile the code.
+	We also provide an example script to run the code once you have compiled it.
 	
-	Generate Executable:
-		We provide a makefile inside /src folder so you can compile the code.
-		We also provide an example script to run the code once you have compiled it.
-		
-	Usage: 
-		./biLouvain -i {inputFileName} -d {delimiterInputFile} -ci {cutoffIterations (defautl=0.01)} -cp {cutoffPhases (default=0.0)} 
-			   -oder {1:Sequential 2:Alternate 3:Random (default=3)} -initial {initialCommunitiesFileName} -merge {0/1:flag (default=1)}
-			   -o {outputFileName (default=inputFileName_Results*)}
+Usage: 
+	./biLouvain -i {inputFileName} -d {delimiterInputFile} -ci {cutoffIterations (defautl=0.01)} -cp {cutoffPhases (default=0.0)} 
+		   -oder {1:Sequential 2:Alternate 3:Random (default=3)} -initial {initialCommunitiesFileName} 
+		   -merge {0/1:flag (default=1)} -o {outputFileName (default=inputFileName_Results*)}
 
-
-	biLouvain input File:
-				Please provide a edge list formated file separated by space, comma, or tabular.
-				Example:
+biLouvain input File:
+			Please provide a edge list formated file separated by space, comma, or tabular.
+			Example:
 						NodeA1	NodeB1	1
 						NodeA1	NodeB3	5
 						NodeA2	NodeB2 	2
-	biLouvain Outputs:
-				When we preprocess your input file two files are going to be created:
-					inputFileName_bipartite.txt: Will have a tab separated edge list of Ids.
-					inputFileName_bipartite_Dictionary.txt: Will have mapping of node names to node ids.
+biLouvain Outputs:
+			When we preprocess your input file two files are going to be created:
+				inputFileName_bipartite.txt: Will have a tab separated edge list of Ids.
+				inputFileName_bipartite_Dictionary.txt: Will have mapping of node names to node ids.
 				
-				merge is set to 1, therefore a file is going to be created:
-					inputFileName_bipartite_InitialCommunities.txt
+			merge is set to 1, therefore a file is going to be created:
+				inputFileName_bipartite_InitialCommunities.txt
 
-				biLouvain execution will create the following files:
-					outputFile_bipartite_ResultsModularity: Murata+ Modularity calculated.					
-					outputFileName_bipartite_ResultsTime:Total time taken by biLouvain algorithm.
-					outputFileName_bipartite_ResultsCommunities:Communities obtained in each set of vertex V1, V2.
-					outputFileName_bipartite_ResultsCoClusterCommunities:Cocluster formed.					
+			biLouvain execution will create the following files:
+				outputFile_bipartite_ResultsModularity: Murata+ Modularity calculated.					
+				outputFileName_bipartite_ResultsTime:Total time taken by biLouvain algorithm.
+				outputFileName_bipartite_ResultsCommunities:Communities obtained in each set of vertex V1, V2.
+				outputFileName_bipartite_ResultsCoClusterCommunities:Cocluster formed.					
 
-					Note: if outputFileName was not provided, then biLouvain will return inputFileName_bipartite_Results.
+			Note: if outputFileName was not provided, then biLouvain will return inputFileName_bipartite_Results.
 	
-	Description of options:
-		-i 		Required.
-				We will preprocess the input file to put it in the format required for biLouvain.
-				For the edge list in the example the result will be:
-					0	2	1
-					0	3	5
-					1	4	2
-				This output will be stored in a file: inputFileName_bipartite.txt
-				And the conversion from Names to Ids will be stored in a file: inputFileName_bipartite_Dictionary.txt
-				For this reason avoid using "_bipartite" as part of your file name, unless you don't require the preprocess because
-				you edge list is already in the format needed.
+Description of options:
+   -i 		Required.
+		We will preprocess the input file to put it in the format required for biLouvain.
+		For the edge list in the example the result will be:
+			0	2	1
+			0	3	5
+			1	4	2
+		This output will be stored in a file: inputFileName_bipartite.txt
+		And the conversion from Names to Ids will be stored in a file: inputFileName_bipartite_Dictionary.txt
+		For this reason avoid using "_bipartite" as part of your file name, unless you don't require the preprocess because
+		you edge list is already in the format needed.
 				
-		-d 		Required. It needs the "".
-				Delimiter used to separate the columns in the input file. We work just with 3: space(" "), comma(","), tabular("\t").
+   -d 		Required. It needs the "".
+		Delimiter used to separate the columns in the input file. We work just with 3: space(" "), comma(","), tabular("\t").
 	
-		-ci 		Optional. Default = 0.01 
-		-cp		Optional. Default = 0.0
+   -ci 		Optional. Default = 0.01 
+   -cp		Optional. Default = 0.0
 		
-		-order		Optional.
-				1(Sequential):Process all nodes from V1 first, then all nodes from V2.
-				2(Alternate): Process nodes from V1 and V2 alternating one from ech vertex set.
-				3(Randon): Process nodes from V1 and V2 selected randomly.
+   -order	Optional.
+		1(Sequential):Process all nodes from V1 first, then all nodes from V2.
+		2(Alternate): Process nodes from V1 and V2 alternating one from ech vertex set.
+		3(Randon): Process nodes from V1 and V2 selected randomly.
 		
-		-initial	Optional.
-				File name containing initial communities. In this file each line represents a communitiy and the nodes belonging to
- 				the community are separated by commas.
+   -initial	Optional.
+		File name containing initial communities. In this file each line represents a communitiy and the nodes belonging to
+ 		the community are separated by commas.
 				
-		-merge		Optional. Default = 1.
-				0: Don't generate initial communities.
-				1: Generate and use initial communities using the common cocluster merge process.
-				If you used -initial {fileName} but merge is still set to 1, then the algorithm won't use your file. It will use the
-				file generated by common cocluster merge process.
+   -merge	Optional. Default = 1.
+		0: Don't generate initial communities.
+		1: Generate and use initial communities using the common cocluster merge process.
+		If you used -initial {fileName} but merge is still set to 1, then the algorithm won't use your file. It will use the
+		file generated by common cocluster merge process.
 
-		-o		Optional. Default = inputFileName_bipartite_Results*
+   -o		Optional. Default = inputFileName_bipartite_Results*
 
 	
