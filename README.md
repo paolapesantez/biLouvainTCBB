@@ -1,6 +1,7 @@
+<p align="center">
 ![alt tag](https://raw.githubusercontent.com/paolapesantez/biLouvain/master/logobiLouvain.png)
+</p>
 
-# biLouvain
 C++ code for detection of communities in bipartite networks.
 
 
