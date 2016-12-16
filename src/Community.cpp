@@ -64,9 +64,7 @@ std::vector<int> Community::getNodes()
 {
 	std::vector<int> result;
 	for(auto it=_nodes.begin();it!=_nodes.end();++it)
-	{
 		result.push_back(it->first);
-	}
 	return result;
 }
 
@@ -86,9 +84,7 @@ double Community::getDegreeCommunity()
 {
 	double result = 0.0;
 	for(auto it=_nodes.begin();it!=_nodes.end();++it)
-	{
-		result+= it->second;
-	}
+		result += it->second;
 	return result;
 }
 
@@ -97,7 +93,8 @@ double Community::getDegreeCommunityWithoutNode(int node_id)
 	double result = 0;
 	for(auto it=_nodes.begin();it!=_nodes.end();++it)
 	{
-		if(it->first != node_id)result+= it->second;
+		if(it->first != node_id)
+                	result += it->second;
 	}
 	return result;
 }

@@ -81,9 +81,7 @@ std::vector<int> MetaNode::getNeighbors()
 {
 	std::vector<int> result;
 	for(auto it=_neighbors.begin();it!=_neighbors.end();++it)
-	{
 		result.push_back(it->first);
-	}
 	return result;
 }
 
@@ -91,9 +89,7 @@ std::vector<int> MetaNode::getNeighborsSorted()
 {
 	std::vector<int> result;
 	for(auto it=_neighbors.begin();it!=_neighbors.end();++it)
-	{
 		result.push_back(it->first);
-	}
 	sort(result.begin(),result.end(),myobject2);
 	return result;
 }
@@ -104,10 +100,8 @@ std::vector<int> MetaNode::getNeighborsWithoutNode(int nodeId)
 	for(auto it=_neighbors.begin();it!=_neighbors.end();++it)
 	{
 		if(it->first != nodeId)
-		{
 			//cout << it->first << endl;
 			result.push_back(it->first);
-		}
 	}
 	return result;
 }
@@ -120,7 +114,8 @@ int MetaNode::getNumberNeighbors()
 double MetaNode::getDegreeNode()
 {
 	double result = 0.0;
-	for(auto it=_neighbors.begin();it!=_neighbors.end();++it) result += it->second;
+	for(auto it=_neighbors.begin();it!=_neighbors.end();++it) 
+                result += it->second;
 	return result;
 }
 
@@ -132,7 +127,8 @@ int MetaNode::getNumberNeighborCommunities()
 double MetaNode::getDegreeNeighborCommunities()
 {
 	double result = 0.0;
-	for(auto it=_neighborCommunities.begin();it!=_neighborCommunities.end();++it) result += it->second;
+	for(auto it=_neighborCommunities.begin();it!=_neighborCommunities.end();++it) 
+		result += it->second;
 	return result;
 }
 
@@ -207,8 +203,8 @@ void MetaNode::deleteNeighborCommunityWeight(int communityId, double weight)
 	auto search = _neighborCommunities.find(communityId);
 	if(search != _neighborCommunities.end())
 	{
-		if(_neighborCommunities[communityId] == weight)_neighborCommunities.erase(communityId);
-		else if (_neighborCommunities[communityId] > weight)_neighborCommunities[communityId] -=  weight;
+		if(_neighborCommunities[communityId] == weight) _neighborCommunities.erase(communityId);
+		else if (_neighborCommunities[communityId] > weight) _neighborCommunities[communityId] -=  weight;
 	}
 }
 

@@ -50,9 +50,11 @@ class MergeMethod : public biLouvainMethodMurataPN
 	public:
 		MergeMethod();
 		~MergeMethod();
-		std::map<int,std::vector<int>> mergeMethodCalculation(Graph &g);
-		std::map<int,std::vector<int>> mergeMethodCalculationWithUpdates(Graph &g);
-		void initialCommunityDefinitionProvidedFile(Graph &g,const std::string &initialCommunitiesFileName);
+		double mergingTime;
+		std::map<int,std::vector<int>>mergeMethodCalculation(Graph &g);
+		void mergeMethodCalculationWithUpdates(Graph &g, std::string outputFileName);
+		void initialCommunityDefinitionProvidedFileCommunities(Graph &g,const std::string &initialCommunitiesFileName);
+		void initialCommunityDefinitionProvidedFileMetaNodes(Graph &g,const std::string &initialCommunitiesFileName);
 		void mergeMethodFile(Graph &g,const std::string &inputFileName);
 };
 

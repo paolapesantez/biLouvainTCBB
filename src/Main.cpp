@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
 		//std::cout<<inputFileName<<std::endl;
 		if(infile.is_open()==true)
 		{
+			std::cout << "\n ::: Loading Bipartite Graph " << inputFileName << " :::\n";
 			std::string bipartiteFileName;
                         std::tr1::unordered_map<int,std::string> bipartiteOriginalEntities;
                         if(inputFileName.find("_bipartite") == std::string::npos)
@@ -104,7 +105,7 @@ int main(int argc, char *argv[])
                                 else
                                 {
                                         if(initialCommunitiesFileName.empty()==false)
-                                                m.initialCommunityDefinitionProvidedFile(*graph,initialCommunitiesFileName);
+                                                m.initialCommunityDefinitionProvidedFileCommunities(*graph,initialCommunitiesFileName);
                                 }
 				std::cout << "\n ::: Starting biLouvain Algorithm :::\n \n";
 				biLouvainMethodMurataPN biLouvain;
@@ -112,7 +113,7 @@ int main(int argc, char *argv[])
 				biLouvain.biLouvainMethodAlgorithm(*graph,cutoffIterations,cutoffPhases,optionOrder,bipartiteOriginalEntities,bipartiteFileName,outputFileName);
 				gettimeofday(&endTime,NULL);	
 				double biLouvainAlgorithmTime = (endTime.tv_sec - startTime.tv_sec)*1000000 + (endTime.tv_usec - startTime.tv_usec);
-				biLouvain.printTimes(biLouvainAlgorithmTime,loadGraphTime);						
+				biLouvain.printTimes(biLouvainAlgorithmTime,loadGraphTime,m.mergingTime);				
 				graph->destroyGraph();
 			}
 			else

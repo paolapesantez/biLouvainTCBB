@@ -35,7 +35,10 @@
 
 #include "MergeMethod.h"
 
-MergeMethod::MergeMethod():biLouvainMethodMurataPN(){}
+MergeMethod::MergeMethod():biLouvainMethodMurataPN()
+{
+	mergingTime = 0.0;
+}
 MergeMethod::~MergeMethod(){}
 
 std::map<int,std::vector<int>> MergeMethod::mergeMethodCalculation(Graph &g)
@@ -99,9 +102,9 @@ std::map<int,std::vector<int>> MergeMethod::mergeMethodCalculation(Graph &g)
 }
 
 
-std::map<int,std::vector<int>> MergeMethod::mergeMethodCalculationWithUpdates(Graph &g)
+void MergeMethod::mergeMethodCalculationWithUpdates(Graph &g, std::string outputFileName)
 {
-	std::map<int,std::vector<int>> communitiesToMerge;
+	//std::map<int,std::vector<int>> communitiesToMerge;
 	int startFor = 0;
 	int maxIntersection = 0;
 	int key = 0;
@@ -149,23 +152,36 @@ std::map<int,std::vector<int>> MergeMethod::mergeMethodCalculationWithUpdates(Gr
 		}
 		//std::cout << "\nCommunity: " << i << "   Key:  " << key << std::endl;
 	}
+	std::stringstream initialCommunities;
+        std::ofstream outputFile;
+        outputFile.open(outputFileName.c_str(),std::ios::out|std::ios::trunc);
+	std::vector<int>community;
 	for(int i=0;i<_numberCommunities;i++)
 	{
 		if(_communities[i].getNumberNodes()>0)
 		{
-			for(unsigned int j=0;j<_communities[i].getNodes().size();j++)
-				communitiesToMerge[i].push_back(_communities[i].getNodes()[j]);
+			community = _communities[i].getNodes();
+			sort(community.begin(),community.end());
+			for(int j=0;j<_communities[i].getNumberNodes();j++)
+				 initialCommunities << community[j] << ",";
+                	initialCommunities.seekp(initialCommunities.str().length()-1);
+	                initialCommunities << "\n";
+        	        //std::cout<<initialCommunities.str();
+                	outputFile << initialCommunities.str();
+	                initialCommunities.str("");
+			community.clear();
 		}
-	}
+        }
+        outputFile.close();
 	fromCommunitiesToNodes(g);
+	std::cout<<g._lastIdPartitionV1+1<<"\t"<<g._numberNodes-(g._lastIdPartitionV1+1)<<"\t"<<g._numberNodes<<std::endl;
 	//for(int i=0;i<g._numberNodes;i++)
         //        std::cout << g._graph[i].getId()<< "\t" << g._graph[i].getDegreeNode()<<std::endl;
-	return communitiesToMerge;
 }
 
 
 
-void MergeMethod::initialCommunityDefinitionProvidedFile(Graph &g,const std::string &initialCommunitiesFileName)
+void MergeMethod::initialCommunityDefinitionProvidedFileCommunities(Graph &g,const std::string &initialCommunitiesFileName)
 {
         std::ifstream initialCommunitiesFile(initialCommunitiesFileName.c_str());
         std::tr1::unordered_map<int,double> nodesInCommunity;
@@ -186,12 +202,17 @@ void MergeMethod::initialCommunityDefinitionProvidedFile(Graph &g,const std::str
                                 nodes = StringSplitter::split(line,"\n",numberNodes);                        
 			for(int i=0;i<numberNodes;i++)
                         {
+				//std::cout<<nodes[i]<<",";
                                 id = stoi(nodes[i]);
-                                g._graph[id].setCommunityId(numberCommunities);
-				nodesInCommunity[g._graph[id].getId()] = g._graph[id].getDegreeNode();
-                        }
+				g._graph[id].setCommunityId(numberCommunities);
+	                        nodesInCommunity[g._graph[id].getId()] = g._graph[id].getDegreeNode(); 
+			}
+			//std::cout<<"\n";
                         Community community(numberCommunities,g._graph[id].getType(),nodesInCommunity);
                         _communities.push_back(community);
+			/*for(int j=0;j<_communities[numberCommunities].getNumberNodes();j++)
+                                std::cout << _communities[numberCommunities].getNodes()[j] << ",";
+                        std::cout<<"\n";*/
                         nodesInCommunity.clear();
                         numberCommunities++;
                 }
@@ -199,6 +220,7 @@ void MergeMethod::initialCommunityDefinitionProvidedFile(Graph &g,const std::str
                 delete[] nodes;
                 initialCommunitiesFile.close();
 		fromCommunitiesToNodes(g);
+		std::cout<<g._lastIdPartitionV1+1<<"\t"<<g._numberNodes-(g._lastIdPartitionV1+1)<<"\t"<<g._numberNodes<<std::endl;
 	        //for(int i=0;i<g._numberNodes;i++)
                 //      std::cout << g._graph[i].getId()<< "\t" << g._graph[i].getDegreeNode()<<std::endl;
         }
@@ -210,29 +232,90 @@ void MergeMethod::initialCommunityDefinitionProvidedFile(Graph &g,const std::str
 }
 
 
+void MergeMethod::initialCommunityDefinitionProvidedFileMetaNodes(Graph &g,const std::string &initialCommunitiesFileName)
+{
+        std::ifstream initialCommunitiesFile(initialCommunitiesFileName.c_str());
+	int lastIdPartitionV1 = -1;
+        std::vector<Node> nodesInCommunity;
+        std::tr1::unordered_map<int,double> neighbors;
+	std::vector<MetaNode>newGraph;
+	int numberCommunities = 0;
+        int numberNodes = 0;
+        int id = 0;
+        std::string line;
+        std::string* nodes;
+        if(initialCommunitiesFile.is_open())
+        {
+                while(initialCommunitiesFile.good())
+                {
+                        getline(initialCommunitiesFile,line);
+                        if(initialCommunitiesFile.eof())break;
+                        if(line.find(",")!= std::string::npos)
+                                nodes = StringSplitter::split(line,",",numberNodes);
+                        else
+                                nodes = StringSplitter::split(line,"\n",numberNodes);
+			for(int i=0;i<numberNodes;i++)
+			{	
+				//std::cout<<nodes[i]<<",";
+				id = stoi(nodes[i]);
+				g._graph[id].setCommunityId(numberCommunities);
+                                nodesInCommunity.push_back(g._graph[id].getNodes()[0]);
+                        }
+			//std::cout<<"\n";
+			MetaNode metanode(numberCommunities,nodesInCommunity[0].getType(),nodesInCommunity,neighbors,-1);
+                        numberCommunities++;
+			newGraph.push_back(metanode);
+                        if(metanode.getType()=="V1")
+                                lastIdPartitionV1++;
+                        nodesInCommunity.clear();
+                }
+		for(int i=0;i<numberCommunities;i++)
+		{
+			for(int j=0;j<newGraph[i].getNumberNodes();j++)
+			{
+				for(int k=0; k<g._graph[newGraph[i].getNodes()[j].getIdInput()].getNumberNeighbors();k++)
+                        	{
+                        		int idNeighbor = g._graph[g._graph[newGraph[i].getNodes()[j].getIdInput()].getNeighbors()[k]].getCommunityId();
+	                                if(neighbors.find(idNeighbor)!= neighbors.end())
+        	                        	neighbors[idNeighbor] += g._graph[newGraph[i].getNodes()[j].getIdInput()].getWeightNeighbor(g._graph[newGraph[i].getNodes()[j].getIdInput()].getNeighbors()[k]);
+                	                else
+                                	        neighbors[idNeighbor] = g._graph[newGraph[i].getNodes()[j].getIdInput()].getWeightNeighbor(g._graph[newGraph[i].getNodes()[j].getIdInput()].getNeighbors()[k]);
+                        	        //std::cout << "Neighbor:" << idNeighbor << "  Weight: " << neighbors[idNeighbor] << std::endl;
+				}
+                        }
+			newGraph[i].setNeighbors(neighbors);
+			neighbors.clear();
+		}
+                delete[] nodes;
+                initialCommunitiesFile.close();
+		MetaNode*_newGraph = new MetaNode[numberCommunities];
+		for(int i=0;i<numberCommunities;i++)
+			_newGraph[i] = newGraph[i];
+		Graph compactedGraph(_newGraph,numberCommunities,g._numberEdges,g._weightEdges,g._weightEdgesV1,g._weightEdgesV2,lastIdPartitionV1);
+		g.destroyGraph();
+	        g = compactedGraph;
+		std::cout<<g._lastIdPartitionV1+1<<"\t"<<g._numberNodes-(g._lastIdPartitionV1+1)<<"\t"<<g._numberNodes<<std::endl;
+                //for(int i=0;i<g._numberNodes;i++)
+                //      std::cout << g._graph[i].getId()<< "\t" << g._graph[i].getDegreeNode()<<std::endl;
+        }
+        else
+        {
+                printf("\nInitial Communities File not found\n");
+                exit(EXIT_FAILURE);
+        }
+}
+
 void MergeMethod::mergeMethodFile(Graph &g,const std::string &inputFileName)
 {
-	std::stringstream initialCommunities;
-	std::map<int,std::vector<int>> communitiesToMerge;
+	struct timeval startTime,endTime;		
 	int pos = inputFileName.find(".");
 	std::string outputFileName = inputFileName.substr(0,pos) + "_InitialCommunities.txt";
 	std::ifstream inputFile(outputFileName.c_str());
+	gettimeofday(&startTime,NULL);
 	if(inputFile.is_open())
-		initialCommunityDefinitionProvidedFile(g,outputFileName);
+		initialCommunityDefinitionProvidedFileCommunities(g,outputFileName);
 	else
-	{
-		communitiesToMerge = mergeMethodCalculationWithUpdates(g);
-        	std::ofstream outputFile;
-	        outputFile.open(outputFileName.c_str(),std::ios::out|std::ios::trunc);
-		for(auto it=communitiesToMerge.begin();it!=communitiesToMerge.end();++it)
-		{
-			for(unsigned int j=0;j<it->second.size();j++)
-				initialCommunities << it->second[j] << ",";
-			initialCommunities.seekp(initialCommunities.str().length()-1);
-			initialCommunities << "\n";
-			outputFile << initialCommunities.str();
-			initialCommunities.str("");
-		}
-		outputFile.close();
-	}
+		mergeMethodCalculationWithUpdates(g,outputFileName);
+	gettimeofday(&endTime,NULL);
+	mergingTime = (endTime.tv_sec - startTime.tv_sec)*1000000 + (endTime.tv_usec - startTime.tv_usec);
 }

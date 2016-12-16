@@ -104,8 +104,14 @@ int biLouvainMethod::calculateEdgesBetweenCommunities(Graph &g,int communityCId,
 double biLouvainMethod::calculateEdgesBetweenCommunitiesMap(Graph &g,int communityCId, int communityDId)
 {
 	double result = 0.0;
+	double y = 0.0, t = 0.0, c = 0.0;
 	for(int i=0;i<_communities[communityCId].getNumberNodes();i++)
-		result += g._graph[_communities[communityCId].getNodes()[i]].getWeightEdgesToNeighborCommunity(communityDId);
+	{
+		y =  g._graph[_communities[communityCId].getNodes()[i]].getWeightEdgesToNeighborCommunity(communityDId) - c;
+		t = result + y;
+		c = (t - result) - y;
+		result = t;
+	}
 	return result;
 }
 
@@ -231,7 +237,7 @@ void biLouvainMethod::initialCommunityDefinition(Graph &g)
 	{
 		//std::cout<<g._graph[i].getId()<<std::endl;
 		g._graph[i].setCommunityId(i);
-		nodesInCommunity[g._graph[i].getId()] =g. _graph[i].getDegreeNode();
+		nodesInCommunity[g._graph[i].getId()]=g._graph[i].getDegreeNode();
 		Community community(i,g._graph[i].getType(),nodesInCommunity);
 		_communities.push_back(community);
 		nodesInCommunity.clear();
@@ -245,11 +251,17 @@ void biLouvainMethod::initialCommunityNeighborsDefinition(Graph &g)
 	std::tr1::unordered_map<int,double> neighborCommunities;
 	for(int i=0;i<g._numberNodes;i++)
 	{
+		double y =0.0, t =0.0, c =0.0;
 		for(int j=0;j<g._graph[i].getNumberNeighbors();j++)
 		{
 			key = g._graph[g._graph[i].getNeighbors()[j]].getCommunityId();
 			if(neighborCommunities.find(key)!= neighborCommunities.end())
-				neighborCommunities[key] += g._graph[i].getWeightNeighbor(g._graph[g._graph[i].getNeighbors()[j]].getId());
+			{
+				y = g._graph[i].getWeightNeighbor(g._graph[g._graph[i].getNeighbors()[j]].getId()) - c;
+				t = neighborCommunities[key] + y;
+				c = (t - neighborCommunities[key])- y;
+				neighborCommunities[key] = t;
+			}
 			else
 				neighborCommunities[key] = g._graph[i].getWeightNeighbor(g._graph[g._graph[i].getNeighbors()[j]].getId());
 		}
@@ -326,11 +338,6 @@ void biLouvainMethod::updateNeighborCommunities(Graph &g,int nodeId, int oldComm
 	{
 		g._graph[g._graph[nodeId].getNeighbors()[i]].deleteNeighborCommunityWeight(oldCommunityId,g._graph[nodeId].getWeightNeighbor(g._graph[nodeId].getNeighbors()[i]));
 		g._graph[g._graph[nodeId].getNeighbors()[i]].addNeighborCommunityWeight(newCommunityId,g._graph[nodeId].getWeightNeighbor(g._graph[nodeId].getNeighbors()[i]));
-
-		/*for(int j=0;j<g._graph[g._graph[nodeId].getNeighbors()[i]].getNumberNeighborsCommunities();j++)
-		{
-			std::cout << "\nNeighbor: " << g._graph[g._graph[nodeId].getNeighbors()[i]].getNeighborCommunities()[j] << "Weight:  " << g._graph[_graph[nodeId].getNeighbors()[i]].getWeightNeighborCommunities(g._graph[_graph[nodeId].getNeighbors()[i]].getNeighborCommunities()[j]);
-		}*/
 	}
 }
 
@@ -341,7 +348,7 @@ std::tr1::unordered_map<int,int> biLouvainMethod::dictionaryCommunitiesNewId()
 {
 	std::tr1::unordered_map<int,int> dictionaryCommunities;
 	int id = 0;
-	for(unsigned int i=0;i<_communities.size();i++)
+	for(int i=0;i<_numberCommunities;i++)
 	{
 		if(_communities[i].getNumberNodes()>0)
 		{
@@ -363,43 +370,47 @@ int biLouvainMethod::numberCommunitiesNonEmpty()
 	return result;
 }
 
+
 void biLouvainMethod::fromCommunitiesToNodes(Graph &g)
 {
 	int lastIdPartitionV1 = -1;
 	int numberNodes = numberCommunitiesNonEmpty();
-	_numberCommunities = numberNodes;
 	MetaNode*_newGraph = new MetaNode[numberNodes];
 	std::vector<Node> nodes;
 	std::tr1::unordered_map<int,double> neighbors;
 	std::tr1::unordered_map<int,int> dictionaryCommunities = dictionaryCommunitiesNewId();
-
+	std::tr1::unordered_map<int,double> errorCalculation;
 	//std::cout << _numberNodes << " " << dictionaryCommunities.size() << std::endl;
 	int id =0;
-	for(unsigned int i=0;i<_communities.size();i++)
+	for(int i=0;i<_numberCommunities;i++)
 	{
 		if(_communities[i].getNumberNodes()>0)
 		{
 			for(int j=0; j<_communities[i].getNumberNodes();j++)
 			{
 				std::vector<Node> temp = g._graph[_communities[i].getNodes()[j]].getNodes();
-				nodes.insert(nodes.end(),temp.begin(),temp.end());
+				nodes.insert(nodes.end(),temp.begin(),temp.end());				
+				//std::cout << "Community: " << _communities[i].getId()<<" Node: "<<_communities[i].getNodes()[j]<<" #Nei: "<<g._graph[_communities[i].getNodes()[j]].getNumberNeighbors()<<std::endl;			
+				double y = 0.0, t = 0.0;
 				for(int k=0; k<g._graph[_communities[i].getNodes()[j]].getNumberNeighbors();k++)
 				{
-					int idNeighbor = dictionaryCommunities[g._graph[g._graph[_communities[i].getNodes()[j]].getNeighbors()[k]].getCommunityId()];
-					//std::cout << "id neighbor: " << g._graph[_communities[i].getNodes()[j]].getNeighbors()[k] << "  id community: " << g._graph[g._graph[_communities[i].getNodes()[j]].getNeighbors()[k]].getCommunityId() << "   id dictionary: " << idNeighbor <<std::endl;
+					int idNeighbor = dictionaryCommunities[g._graph[g._graph[_communities[i].getNodes()[j]].getNeighbors()[k]].getCommunityId()];					
 					if(neighbors.find(idNeighbor)!= neighbors.end())
-						neighbors[idNeighbor] += g._graph[_communities[i].getNodes()[j]].getWeightNeighbor(g._graph[_communities[i].getNodes()[j]].getNeighbors()[k]);
+					{													
+						y = g._graph[_communities[i].getNodes()[j]].getWeightNeighbor(g._graph[_communities[i].getNodes()[j]].getNeighbors()[k])-errorCalculation[idNeighbor];
+						t = neighbors[idNeighbor] + y;
+						errorCalculation[idNeighbor] = (t - neighbors[idNeighbor]) - y;
+						neighbors[idNeighbor] = t;					
+					}		
 					else
+					{
 						neighbors[idNeighbor] = g._graph[_communities[i].getNodes()[j]].getWeightNeighbor(g._graph[_communities[i].getNodes()[j]].getNeighbors()[k]);
-					//std::cout << "Neighbor:" << idNeighbor << "  Weight: " << neighbors[idNeighbor] << std::endl;
+						errorCalculation[idNeighbor] = 0.0;
+					}
 				}
 			}
+			errorCalculation.clear();
 			MetaNode metanode(id,_communities[i].getDescription(),nodes,neighbors,-1);
-			/*std::cout << "id: " << id << std::endl;
-			for(int j=0;j<metanode.getNumberNeighbors();j++)
-			{
-				std::cout << "Neighbor:" << metanode.getNeighbors()[j] << "  Weight: " << metanode.getWeightNeighbor(metanode.getNeighbors()[j]) << std::endl;
-			}*/
 			_newGraph[id] = metanode;
 			if(metanode.getType()=="V1")
 				lastIdPartitionV1++;
@@ -407,7 +418,7 @@ void biLouvainMethod::fromCommunitiesToNodes(Graph &g)
 			nodes.clear();
 			neighbors.clear();
 		}
-	}
+	}	
 	Graph compactedGraph(_newGraph,numberNodes,g._numberEdges,g._weightEdges,g._weightEdgesV1,g._weightEdgesV2,lastIdPartitionV1);
 	g.destroyGraph();
 	g = compactedGraph;
@@ -546,7 +557,7 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 		double maxDeltaModularityGain = -1.0;
 		double totalDeltaModularityGain = 0.0;
 		int currentCommunity = g._graph[nodesOrderExecution[i]].getCommunityId();
-		
+		double y = 0.0, c = 0.0 , t = 0.0;	
 		//Find CANDIDATE COMMUNITIES to which node i can move to
 		gettimeofday(&t1,NULL);
 		std::vector<int> temp;
@@ -578,7 +589,6 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 		//gainString << gainDoble;
 		//totalDeltaModularityGain += deltaModularityGain.newModularityContribution - (gainDoble - stof(gainString.str()));
 		totalDeltaModularityGain += deltaModularityGain.newModularityContribution;
-
 		//Calculate Delta QB for the set of candidate communities (Cj)
 		int candidateCommunity = -1;
 		std::stringstream maxChangesCandidate;
@@ -587,6 +597,7 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 			std::stringstream temp;
 			for(unsigned int j=0;j<candidates.size();j++)
 			{
+				double y1 = 0.0, c1 = 0.0, t1 = 0.0;
 				double candidateDeltaModularityGain = 0.0;
 				temp.str("");
 				//temp.precision(64);
@@ -597,8 +608,7 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 				//gainString.str("");
                                 //gainString << gainDoble;
 				//candidateDeltaModularityGain += deltaModularityGain.newModularityContribution - (gainDoble - stof(gainString.str()));
-				candidateDeltaModularityGain += deltaModularityGain.newModularityContribution;
-
+				 candidateDeltaModularityGain += deltaModularityGain.newModularityContribution;;
 				//Calculate Delta QB for neighbors of candidate communities (Dj)
 				//printf("4 \n");
 				std::vector<int>neighborCommunities = findNeighborCommunitiesMap(g,candidates[j]);
@@ -609,8 +619,11 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 					temp << deltaModularityGain.coClusterMateCommunityId << "#" << gainDoble << "$";
 					//gainString.str("");
 					//gainString << gainDoble;
-				        //candidateDeltaModularityGain += deltaModularityGain.newModularityContribution - (gainDoble - stof(gainString.str()));
-					candidateDeltaModularityGain += deltaModularityGain.newModularityContribution;
+				        //candidateDeltaModularityGain += deltaModularityGain.newModularityContribution - (gainDoble - stof(gainString.str()));	
+					y1 = deltaModularityGain.newModularityContribution - c1;
+                                 	t1 = candidateDeltaModularityGain + y1;
+                                 	c1 = (t1-candidateDeltaModularityGain) - y1;
+	                                candidateDeltaModularityGain = t1;
 				}
 				if(j==0)
 				{
@@ -631,6 +644,7 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 			}
 			candidates.clear();
 			changes << maxChangesCandidate.str();
+			maxChangesCandidate.str("");
 			totalDeltaModularityGain += maxDeltaModularityGain;
 		}
 		if(candidateCommunity != -1)
@@ -651,7 +665,10 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 						//gainString.str("");
 	                                        //gainString << gainDoble;
 	        	                        //totalDeltaModularityGain += deltaModularityGain.newModularityContribution - (gainDoble- stof(gainString.str()));
-						totalDeltaModularityGain += deltaModularityGain.newModularityContribution;
+						y = deltaModularityGain.newModularityContribution - c;
+				                t = totalDeltaModularityGain + y;
+					        c = (t-totalDeltaModularityGain) - y;
+				                totalDeltaModularityGain = t;
 					}
 				}
 			}
@@ -677,6 +694,8 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 			updateTime += (t6.tv_sec - t5.tv_sec)*1000000 + (t6.tv_usec - t5.tv_usec);
 		}
 		double nodeTime = (t6.tv_sec - t1.tv_sec)*1000000 + (t6.tv_usec - t1.tv_usec);
+		//break;
+	   //}
 	}
 	return maxModularityGainIteration;
 }
@@ -715,7 +734,6 @@ void biLouvainMethod::biLouvainMethodAlgorithm(Graph &g,double cutoffIterations,
 	double totalModularity = 0.0;
 	double phaseModularity = 1;
 	int phases = 1;
-	bool first = true;
 	int* nodesOrderExecution = NULL;
 
 	//PHASE
@@ -751,7 +769,7 @@ void biLouvainMethod::biLouvainMethodAlgorithm(Graph &g,double cutoffIterations,
 		double _cutoffIterations = 2.0;
 
 		nodesOrderExecution = nodesOrderToProcess(g,optionOrder);
-		/*for(int i=0;i<_numberNodes;i++)
+		/*for(int i=0;i<g._numberNodes;i++)
 		{
 			printf("%d \t %d \n",i,nodesOrderExecution[i]);
 		}*/
@@ -776,8 +794,7 @@ void biLouvainMethod::biLouvainMethodAlgorithm(Graph &g,double cutoffIterations,
 			fromCommunitiesToNodes(g);
 			phases++;
 		}
-	}
-	
+	}	
 	line.str("");
 	line.precision(15);
 	line << "\n--- Final Murata+ Modularity: " <<  totalModularity;
@@ -1058,13 +1075,14 @@ void biLouvainMethod::printCommunityNodesNeighbors(Graph &g,int communityId)
 		printf("\nCommunity doesn't exist \n");
 }
 
-void biLouvainMethod::printTimes(double biLouvainTime, double loadGraphTime)
+void biLouvainMethod::printTimes(double biLouvainTime, double loadGraphTime, double mergingTime)
 {
 	std::string outputfileTime = _outputFileName + "_ResultsTime.txt";
 	std::ofstream outfileTime;
 	outfileTime.open(outputfileTime.c_str(),std::ios::out|std::ios::trunc);
-	outfileTime << "::: Total Time: " << timeConverter(biLouvainTime+loadGraphTime).c_str() << "microseconds: " << biLouvainTime+loadGraphTime << "\n";
+	outfileTime << "::: Total Time: " << timeConverter(biLouvainTime+loadGraphTime+mergingTime).c_str() << "microseconds: " << biLouvainTime+loadGraphTime+mergingTime << "\n";
 	outfileTime << "\n::: Load Graph Total Time: " << timeConverter(loadGraphTime).c_str() << "microseconds: " << loadGraphTime << "\n";
+	outfileTime << "\n::: Merging Total Time: " << timeConverter(mergingTime).c_str() << "microseconds: " << mergingTime << "\n";
 	outfileTime << "\n::: biLouvain Algorithm Total Time: " << timeConverter(biLouvainTime).c_str() << "microseconds: " << biLouvainTime << "\n";
 	outfileTime << "\n::: Initial Times :::";
 	outfileTime << "\nInitial Community Time: " + timeConverter(initialCommunityTime);

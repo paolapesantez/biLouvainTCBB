@@ -92,6 +92,7 @@ class LoadGraph
 			inputFile.seekg(0, std::ios::beg);
 	
 			std::tr1::unordered_map<int,double> neighborsPerNode[_numberNodes];
+			double resultSuma = 0.0;
 			while(inputFile.good())				//read line by line
 			{
 				getline(inputFile,strLine);
@@ -99,7 +100,7 @@ class LoadGraph
 				if((strLine.length()>0)&&(strLine[0] != '#'))
 				{       //find neighbors for each node
 					pieces = StringSplitter::split(strLine,"\t",itemsFound);
-					neighborsPerNode[atoi(pieces[0].c_str())][atoi(pieces[1].c_str())] = atof(pieces[2].c_str());
+					neighborsPerNode[atoi(pieces[0].c_str())][atoi(pieces[1].c_str())] = atof(pieces[2].c_str());		
 					neighborsPerNode[atoi(pieces[1].c_str())][atoi(pieces[0].c_str())] = atof(pieces[2].c_str());
 					_numberEdges++;
 					_weightEdges += atof(pieces[2].c_str());

@@ -113,7 +113,7 @@ class biLouvainMethod
 		void printAllCommunityNodeswithSingletons(Graph &g,std::tr1::unordered_map<int,std::string> &bipartiteOriginalEntities);
 		void printCommunityNodes(int communityId);
 		void printCommunityNodesNeighbors(Graph &g,int communityId);
-		void printTimes(double totalTime, double loadGraphTime);
+		void printTimes(double totalTime, double loadGraphTime,double mergingTime);
 };
 
 #endif /* BILOUVAINMETHOD_H_ */
