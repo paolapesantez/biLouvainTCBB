@@ -1,6 +1,6 @@
-<p align="center">
-![alt tag](https://raw.githubusercontent.com/paolapesantez/biLouvain/master/logobiLouvain.png)
-</p>
+
+              ![alt tag](https://raw.githubusercontent.com/paolapesantez/biLouvain/master/logobiLouvain.png)
+
 
 C++ code for detection of communities in bipartite networks.
 
