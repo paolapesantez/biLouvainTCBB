@@ -251,17 +251,11 @@ void biLouvainMethod::initialCommunityNeighborsDefinition(Graph &g)
 	std::tr1::unordered_map<int,double> neighborCommunities;
 	for(int i=0;i<g._numberNodes;i++)
 	{
-		double y =0.0, t =0.0, c =0.0;
 		for(int j=0;j<g._graph[i].getNumberNeighbors();j++)
 		{
 			key = g._graph[g._graph[i].getNeighbors()[j]].getCommunityId();
 			if(neighborCommunities.find(key)!= neighborCommunities.end())
-			{
-				y = g._graph[i].getWeightNeighbor(g._graph[g._graph[i].getNeighbors()[j]].getId()) - c;
-				t = neighborCommunities[key] + y;
-				c = (t - neighborCommunities[key])- y;
-				neighborCommunities[key] = t;
-			}
+				neighborCommunities[key] += g._graph[i].getWeightNeighbor(g._graph[g._graph[i].getNeighbors()[j]].getId());
 			else
 				neighborCommunities[key] = g._graph[i].getWeightNeighbor(g._graph[g._graph[i].getNeighbors()[j]].getId());
 		}
@@ -754,16 +748,16 @@ void biLouvainMethod::biLouvainMethodAlgorithm(Graph &g,double cutoffIterations,
 		gettimeofday(&t12,NULL);
 		initialCoClusterMateTime += (t12.tv_sec - t11.tv_sec)*1000000 + (t12.tv_usec - t11.tv_usec);
 
-		printf("\n ::: Phase %d ::: \n", phases);
+		printf("\n\n ::: Phase %d :::", phases);
 		line.str("");
 		line << "--- Phase: " <<  phases << "\n";
 		outfileMG << line.str();
-		printf("\n Initial Total partitioning modularity: %.15lf \n", totalModularity);
+		printf("\n Initial Total partitioning modularity: %.15lf", totalModularity);
 		line.str("");
 		line.precision(15);
 		line << "Initial Total Modularity: " <<  totalModularity << "\n";
 		outfileMG << line.str();
-		printf("\n\n ::: Initial Communities :::\n");
+		printf("\n\n ::: Initial Communities :::");
 		printCommunities(g);
 		int iterations = 1;
 		double _cutoffIterations = 2.0;
@@ -777,7 +771,7 @@ void biLouvainMethod::biLouvainMethodAlgorithm(Graph &g,double cutoffIterations,
 		//ITERATION		
 		while(_cutoffIterations > cutoffIterations)
 		{
-			printf("\n\n ::: Iteration: %d Start :::\n",iterations);
+			printf("\n\n ::: Iteration: %d Start :::",iterations);
 			double maxModularityGainIteration = calculateMaxModularityGainIteration(g,nodesOrderExecution);
 			calculateCommunitiesModulatiryContribution();
 			printf("\n\n ::: Iteration: %d End  :::  Maximum Modularity Gain: %.15lf", iterations,maxModularityGainIteration);

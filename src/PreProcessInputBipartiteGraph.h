@@ -49,7 +49,6 @@ class PreProcessInputBipartiteGraph
 
 	std::tr1::unordered_map<int,std::string> static preProcessingGraphData(const std::string &inputFileName, const std::string &delimiter)
 	{
-		std::cout<<delimiter<<std::endl;
 		std::tr1::unordered_map<int,std::string> bipartiteOriginalEntities;
 		int pos = inputFileName.find_last_of(".");
                 std::string bipartiteFileName = inputFileName.substr(0,pos)+"_bipartite.txt";
@@ -57,75 +56,87 @@ class PreProcessInputBipartiteGraph
                 std::ifstream bipartiteFile(bipartiteFileName.c_str());
 		if(bipartiteFile.is_open()==false)
                 {
-                	printf("\n \n ::: Reading and Preprocessing Input File...%s  Please Wait... :::",inputFileName.c_str());
+                	printf("\n ::: Reading and Preprocessing Input File...%s  Please Wait... :::",inputFileName.c_str());
 			std::ifstream inputFile(inputFileName.c_str());
-			bool is_good = true;
-			if(is_good)
-			{
-				std::tr1::unordered_map<std::string,int> bipartiteIds;
-				std::ofstream bipartiteOFile;
-				std::ofstream dictionaryFile;
-				dictionaryFile.open(dictionaryFileName.c_str(),std::ios::out|std::ios::trunc);
-				bipartiteOFile.open(bipartiteFileName.c_str(),std::ios::out|std::ios::trunc);
-				int cont = 0;
-				std::string line = "";
-				std::string *pieces;
-				int items = 0;
-				std::stringstream entry;	
-				while(inputFile.good())
+			std::string line = "";
+			while(inputFile.good())
+                        {
+                        	getline(inputFile,line);
+                              	int location = line.find(delimiter);
+                        	if(location == std::string::npos) 
 				{
-					getline(inputFile,line);
-					if(inputFile.eof())break;
-					pieces = StringSplitter::split(line,delimiter,items);
-					//std::cout<<"\n" << pieces[0] <<"   " << items;
-					if(bipartiteIds.find(pieces[0].c_str()) == bipartiteIds.end())
-					//if(bipartiteOriginalEntities.end() == find_if(bipartiteOriginalEntities.begin(),bipartiteOriginalEntities.end(),[&value](const map_value_type& vt){ return vt.second == pieces[0]}))
-					{
-						bipartiteIds[pieces[0]] = cont;	
-						bipartiteOriginalEntities[cont] = pieces[0];
-						entry.str("");
-						entry << cont << "\t" << pieces[0] << "\n";
-						dictionaryFile << entry.str();
-						cont++;
-					}
+					printf("\n ::: Given delimiter doesn't agree with delimiter being used in file :::\n");
+	                                exit(EXIT_FAILURE);
 				}
-				inputFile.clear();
-				inputFile.seekg(0,std::ios::beg);
-				while(inputFile.good())
-				{
-					std::stringstream edge;
-					getline(inputFile,line);
-					if(inputFile.eof())break;
-					pieces = StringSplitter::split(line,delimiter,items);
-					//std::cout<<"\n" << pieces[1];
-					//if(bipartiteOriginalEntities.end() == find_if(bipartiteOriginalEntities.begin(),bipartiteOriginalEntities.end(),[&value](const map_value_type& vt){ return vt.second == pieces[1]}))
-					if(bipartiteIds.find(pieces[1].c_str()) == bipartiteIds.end())
-					{
-						bipartiteIds[pieces[1]] = cont;
-						bipartiteOriginalEntities[cont] = pieces[1];
-						entry.str("");
-						entry << cont << "\t" << pieces[1] << "\n";
-						dictionaryFile << entry.str();
-						cont++;
-					}
-					edge.str("");
-					//edge.precision(15);
-					if(items == 3)
-						edge << bipartiteIds[pieces[0]] << "\t" << bipartiteIds[pieces[1]] << "\t" << pieces[2] << "\n";
-					else
-						edge << bipartiteIds[pieces[0]] << "\t" << bipartiteIds[pieces[1]] << "\t1" << "\n";
-					bipartiteOFile << edge.str();
-				}
-				inputFile.close();
-				dictionaryFile.close();
-				bipartiteOFile.close();
-				bipartiteIds.clear();
-				delete[] pieces;	
-				return bipartiteOriginalEntities;
+				break;
 			}
+			inputFile.clear();
+                        inputFile.seekg(0, std::ios::beg);					
+			std::tr1::unordered_map<std::string,int> bipartiteIds;
+			std::ofstream bipartiteOFile;
+			std::ofstream dictionaryFile;
+			dictionaryFile.open(dictionaryFileName.c_str(),std::ios::out|std::ios::trunc);
+			bipartiteOFile.open(bipartiteFileName.c_str(),std::ios::out|std::ios::trunc);
+			int cont = 0;
+			std::string *pieces;
+                        int items = 0;
+			std::stringstream entry;	
+			while(inputFile.good())
+			{
+				getline(inputFile,line);
+				if(inputFile.eof())break;
+				pieces = StringSplitter::split(line,delimiter,items);
+				//std::cout<<"\n" << pieces[0] <<"   " << items;
+				if(bipartiteIds.find(pieces[0].c_str()) == bipartiteIds.end())
+				//if(bipartiteOriginalEntities.end() == find_if(bipartiteOriginalEntities.begin(),bipartiteOriginalEntities.end(),[&value](const map_value_type& vt){ return vt.second == pieces[0]}))
+				{
+					bipartiteIds[pieces[0]] = cont;	
+					bipartiteOriginalEntities[cont] = pieces[0];
+					entry.str("");
+					entry << cont << "\t" << pieces[0] << "\n";
+					dictionaryFile << entry.str();
+					cont++;
+				}
+			}
+			inputFile.clear();
+			inputFile.seekg(0,std::ios::beg);
+			while(inputFile.good())
+			{
+				std::stringstream edge;
+				getline(inputFile,line);
+				if(inputFile.eof())break;
+				pieces = StringSplitter::split(line,delimiter,items);
+				//std::cout<<"\n" << pieces[1];
+				//if(bipartiteOriginalEntities.end() == find_if(bipartiteOriginalEntities.begin(),bipartiteOriginalEntities.end(),[&value](const map_value_type& vt){ return vt.second == pieces[1]}))
+				if(bipartiteIds.find(pieces[1].c_str()) == bipartiteIds.end())
+				{
+					bipartiteIds[pieces[1]] = cont;
+					bipartiteOriginalEntities[cont] = pieces[1];
+					entry.str("");
+					entry << cont << "\t" << pieces[1] << "\n";
+					dictionaryFile << entry.str();
+					cont++;
+				}
+				edge.str("");
+				//edge.precision(15);
+				if(items == 3)
+					edge << bipartiteIds[pieces[0]] << "\t" << bipartiteIds[pieces[1]] << "\t" << pieces[2] << "\n";
+				else
+					edge << bipartiteIds[pieces[0]] << "\t" << bipartiteIds[pieces[1]] << "\t1" << "\n";
+				bipartiteOFile << edge.str();
+			}
+			inputFile.close();
+			dictionaryFile.close();
+			bipartiteOFile.close();
+			bipartiteIds.clear();
+			delete[] pieces;	
 		}
+		else
+			bipartiteOriginalEntities = readDictionaryFile(bipartiteFileName);
+		return bipartiteOriginalEntities;
 	}
 
+	
 	std::tr1::unordered_map<int,std::string> static readDictionaryFile(const std::string &inputFileName)
        	{
                 std::tr1::unordered_map<int,std::string> bipartiteOriginalEntities;
@@ -150,7 +161,7 @@ class PreProcessInputBipartiteGraph
                         delete[] pieces;
                 }
 		else
-			printf("\n Warning: Dicitionary File was not found.");			
+			printf("\n ::: Warning: Dictionary File was not found. :::");			
 		return bipartiteOriginalEntities;
 	}
 };

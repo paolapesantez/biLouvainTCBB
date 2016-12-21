@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 		//std::cout<<inputFileName<<std::endl;
 		if(infile.is_open()==true)
 		{
-			std::cout << "\n ::: Loading Bipartite Graph " << inputFileName << " :::\n";
+			std::cout << "\n ::: Loading Bipartite Graph " << inputFileName << " :::";
 			std::string bipartiteFileName;
                         std::tr1::unordered_map<int,std::string> bipartiteOriginalEntities;
                         if(inputFileName.find("_bipartite") == std::string::npos)
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
                         loadGraphTime = (endTime.tv_sec - startTime.tv_sec)*1000000 + (endTime.tv_usec - startTime.tv_usec);
                         if (pass == 0)
                          {                            
-                                std::cout << "\n ::: Done Loading Bipartite Graph :::\n \n";
+                                std::cout << "\n ::: Done Loading Bipartite Graph :::";
 				MergeMethod m;
                                 if(merge == 1)
                                         m.mergeMethodFile(*graph,bipartiteFileName);
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
                                         if(initialCommunitiesFileName.empty()==false)
                                                 m.initialCommunityDefinitionProvidedFileCommunities(*graph,initialCommunitiesFileName);
                                 }
-				std::cout << "\n ::: Starting biLouvain Algorithm :::\n \n";
+				std::cout << "\n ::: Starting biLouvain Algorithm :::";
 				biLouvainMethodMurataPN biLouvain;
 				gettimeofday(&startTime,NULL);							
 				biLouvain.biLouvainMethodAlgorithm(*graph,cutoffIterations,cutoffPhases,optionOrder,bipartiteOriginalEntities,bipartiteFileName,outputFileName);
@@ -118,19 +118,19 @@ int main(int argc, char *argv[])
 			}
 			else
 			{
-				printf("\n There was a problem reading the graph input file\n");
+				printf("\n ::: There was a problem reading the graph input file :::\n");
 				exit(EXIT_FAILURE);
 			}
 		}
 		else
                 {
-                        printf("\n Input file was not found\n");
+                        printf("\n ::: Input file was not found :::\n");
                         exit(EXIT_FAILURE);
                 }
 	}
 	catch (...)
 	{
-		std::cout << "Unknown error Main" << std::endl;
+		std::cout << " ::: Unknown error Main :::" << std::endl;
 	}
 	std::cout << std::endl << "::: biLouvain Method has finished :::" << std::endl;
 	return 0;
@@ -150,26 +150,26 @@ void parseCommandLine(const int argc, char * const argv[])
 		//printf("%d \t %d \t %c\n",prevInd,optind,c);
 		if((optind==prevInd+2) && (*optarg=='-'))
 		{
-			printf("You forgot to provide an argument %s\n");
+			printf("::: You forgot to provide an argument %s :::\n");
 			printUsage();
 		}
 		switch (c) {
 		    case 'i':
 		        inputFileName = optarg;
 			if(inputFileName.empty())
-			{	printf("No input file name provided \n");
+			{	printf(" ::: No input file name provided :::\n");
 				printUsage();
 			}
 		    	break;
 		    case 'd':
 		        delimiter = optarg;
 			if(delimiter.empty())
-			{	printf("No delimiter provided \n");	
+			{	printf(" ::: No delimiter provided :::\n");	
 				printUsage();
 			}
 			else if((delimiter != " ")&&(delimiter != "\\t")&&(delimiter != ","))
 			{
-				printf("Unknown delimiter provided \n");
+				printf(" ::: Unknown delimiter provided :::\n");
 		                printUsage();		
 			}
 			else if(delimiter == "\\t")

@@ -68,22 +68,33 @@ class LoadGraph
 		}
 		if(is_good)						//If the file has been found
 		{
+			std::string line = "";
+			while(inputFile.good())
+                        {
+                                getline(inputFile,line);
+                                int location = line.find("\t");
+                                if(location == std::string::npos)
+                                {
+                                        printf("\n ::: The bipartite file should be tab delimited :::\n");
+                                        exit(EXIT_FAILURE);
+                                }
+                                break;
+                        }
 			//Getting the maximum id which will indicate us the number of nodes in the bipartite graph
 			int maximumId = 0;
-			_lastIdPartitionV1 = 0;
-			std::string strLine = "";
-			int itemsFound = 0;
+			int items = 0;
 			std::string* pieces;
 			while(inputFile.good())				//read line by line
 			{
-				getline(inputFile,strLine);
+				getline(inputFile,line);
 				if(inputFile.eof())break;
-				if((strLine.length()>0)&&(strLine[0] != '#')) //because some inputs can contain informative lines starting with #
+				if((line.length()>0)&&(line[0] != '#')) //because some inputs can contain informative lines starting with #
 				{
-					pieces = StringSplitter::split(strLine, "\t", itemsFound);
+					pieces = StringSplitter::split(line,"\t",items);
 					if(atoi(pieces[1].c_str())>maximumId)
 						maximumId = atoi(pieces[1].c_str());
-					_lastIdPartitionV1 = atoi(pieces[0].c_str());
+					if(atoi(pieces[0].c_str())>_lastIdPartitionV1)
+						_lastIdPartitionV1 = atoi(pieces[0].c_str());
 				}
 			}
 			_numberNodes = maximumId+1;
@@ -92,14 +103,13 @@ class LoadGraph
 			inputFile.seekg(0, std::ios::beg);
 	
 			std::tr1::unordered_map<int,double> neighborsPerNode[_numberNodes];
-			double resultSuma = 0.0;
 			while(inputFile.good())				//read line by line
 			{
-				getline(inputFile,strLine);
+				getline(inputFile,line);
 				if(inputFile.eof())break;
-				if((strLine.length()>0)&&(strLine[0] != '#'))
+				if((line.length()>0)&&(line[0] != '#'))
 				{       //find neighbors for each node
-					pieces = StringSplitter::split(strLine,"\t",itemsFound);
+					pieces = StringSplitter::split(line,"\t",items);
 					neighborsPerNode[atoi(pieces[0].c_str())][atoi(pieces[1].c_str())] = atof(pieces[2].c_str());		
 					neighborsPerNode[atoi(pieces[1].c_str())][atoi(pieces[0].c_str())] = atof(pieces[2].c_str());
 					_numberEdges++;
@@ -108,12 +118,13 @@ class LoadGraph
 			}
 			std::vector<Node> nodeV;
 			for(int i=0;i<_numberNodes;i++)   //Creation of metanodes and nodes
-			{
+			{					
 				if(i<=_lastIdPartitionV1)	//Create nodes belonging to set V1
 				{	Node node(i,"V1",0);
 					nodeV.push_back(node);
 					MetaNode metanode(i,"V1",nodeV,neighborsPerNode[i],-1);
-					for(auto it=neighborsPerNode[i].begin();it!=neighborsPerNode[i].end();++it) _weightEdgesV1 += it->second;
+					for(auto it=neighborsPerNode[i].begin();it!=neighborsPerNode[i].end();++it)
+						_weightEdgesV1 += it->second;
 					_graph[i] = metanode;
 					nodeV.clear();
 				}
@@ -121,7 +132,8 @@ class LoadGraph
 				{	Node node(i,"V2",0);	
 					nodeV.push_back(node);
 					MetaNode metanode(i,"V2",nodeV,neighborsPerNode[i],-1);
-					for(auto it=neighborsPerNode[i].begin();it!=neighborsPerNode[i].end();++it) _weightEdgesV2 += it->second;
+					for(auto it=neighborsPerNode[i].begin();it!=neighborsPerNode[i].end();++it)
+						_weightEdgesV2 += it->second;
 					_graph[i] = metanode;
 					nodeV.clear();
 				}

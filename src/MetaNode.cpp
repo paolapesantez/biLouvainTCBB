@@ -150,9 +150,7 @@ std::vector<int> MetaNode::getNeighborCommunities()
 {
 	std::vector<int> result;
 	for(auto it=_neighborCommunities.begin();it!=_neighborCommunities.end();++it)
-	{
 		result.push_back(it->first);
-	}
 	return result;
 }
 

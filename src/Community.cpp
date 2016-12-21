@@ -92,10 +92,8 @@ double Community::getDegreeCommunityWithoutNode(int node_id)
 {
 	double result = 0;
 	for(auto it=_nodes.begin();it!=_nodes.end();++it)
-	{
 		if(it->first != node_id)
                 	result += it->second;
-	}
 	return result;
 }
 
@@ -103,9 +101,8 @@ std::vector<int> Community::getNodesWithoutNode(int node_id)
 {
 	std::vector<int> result;
 	for(auto it=_nodes.begin();it!=_nodes.end();++it)
-	{
-		if(it->first != node_id) result.push_back(it->first);
-	}
+		if(it->first != node_id) 
+			result.push_back(it->first);
 	return result;
 }
 
