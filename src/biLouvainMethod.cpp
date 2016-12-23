@@ -104,14 +104,8 @@ int biLouvainMethod::calculateEdgesBetweenCommunities(Graph &g,int communityCId,
 double biLouvainMethod::calculateEdgesBetweenCommunitiesMap(Graph &g,int communityCId, int communityDId)
 {
 	double result = 0.0;
-	double y = 0.0, t = 0.0, c = 0.0;
 	for(int i=0;i<_communities[communityCId].getNumberNodes();i++)
-	{
-		y =  g._graph[_communities[communityCId].getNodes()[i]].getWeightEdgesToNeighborCommunity(communityDId) - c;
-		t = result + y;
-		c = (t - result) - y;
-		result = t;
-	}
+		result +=  g._graph[_communities[communityCId].getNodes()[i]].getWeightEdgesToNeighborCommunity(communityDId);
 	return result;
 }
 
@@ -551,7 +545,6 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 		double maxDeltaModularityGain = -1.0;
 		double totalDeltaModularityGain = 0.0;
 		int currentCommunity = g._graph[nodesOrderExecution[i]].getCommunityId();
-		double y = 0.0, c = 0.0 , t = 0.0;	
 		//Find CANDIDATE COMMUNITIES to which node i can move to
 		gettimeofday(&t1,NULL);
 		std::vector<int> temp;
@@ -591,7 +584,6 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 			std::stringstream temp;
 			for(unsigned int j=0;j<candidates.size();j++)
 			{
-				double y1 = 0.0, c1 = 0.0, t1 = 0.0;
 				double candidateDeltaModularityGain = 0.0;
 				temp.str("");
 				//temp.precision(64);
@@ -601,8 +593,8 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 				temp << deltaModularityGain.coClusterMateCommunityId << "#" << gainDoble << "$";
 				//gainString.str("");
                                 //gainString << gainDoble;
-				//candidateDeltaModularityGain += deltaModularityGain.newModularityContribution - (gainDoble - stof(gainString.str()));
-				 candidateDeltaModularityGain += deltaModularityGain.newModularityContribution;;
+				//candidateDeltaModularityGain += deltaModularityGain.newModularityContribution-(gainDoble - stof(gainString.str()));
+				 candidateDeltaModularityGain += deltaModularityGain.newModularityContribution;
 				//Calculate Delta QB for neighbors of candidate communities (Dj)
 				//printf("4 \n");
 				std::vector<int>neighborCommunities = findNeighborCommunitiesMap(g,candidates[j]);
@@ -614,10 +606,7 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 					//gainString.str("");
 					//gainString << gainDoble;
 				        //candidateDeltaModularityGain += deltaModularityGain.newModularityContribution - (gainDoble - stof(gainString.str()));	
-					y1 = deltaModularityGain.newModularityContribution - c1;
-                                 	t1 = candidateDeltaModularityGain + y1;
-                                 	c1 = (t1-candidateDeltaModularityGain) - y1;
-	                                candidateDeltaModularityGain = t1;
+					candidateDeltaModularityGain += deltaModularityGain.newModularityContribution;;
 				}
 				if(j==0)
 				{
@@ -659,10 +648,7 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 						//gainString.str("");
 	                                        //gainString << gainDoble;
 	        	                        //totalDeltaModularityGain += deltaModularityGain.newModularityContribution - (gainDoble- stof(gainString.str()));
-						y = deltaModularityGain.newModularityContribution - c;
-				                t = totalDeltaModularityGain + y;
-					        c = (t-totalDeltaModularityGain) - y;
-				                totalDeltaModularityGain = t;
+						totalDeltaModularityGain += deltaModularityGain.newModularityContribution;
 					}
 				}
 			}
