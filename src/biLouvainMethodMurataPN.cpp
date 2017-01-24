@@ -156,7 +156,7 @@ newDataCommunityVector biLouvainMethodMurataPN::murataCalculationCoClusterMates(
 }
 
 
-double biLouvainMethodMurataPN::CoClusterMateDefinitionAllCommunities(Graph &g)
+double biLouvainMethodMurataPN::CoClusterMateDefinitionAllCommunities(Graph &g, int start, int end)
 {
 	std::vector<int> possibleCoClusterMates;
 	std::vector<int> coClusterMateCommunityId;
@@ -164,7 +164,7 @@ double biLouvainMethodMurataPN::CoClusterMateDefinitionAllCommunities(Graph &g)
 	double maxMurataModularity = 0.0;	
 	newDataCommunityVector communityModularity;
 
-	for(int i=0;i<_numberCommunities;i++)
+	for(int i=start;i<end;i++)
 	{
 		if(_communities[i].getNumberNodes()>0)
 		{

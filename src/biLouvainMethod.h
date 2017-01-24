@@ -79,7 +79,7 @@ class biLouvainMethod
 		std::tr1::unordered_map<int,int> dictionaryCommunitiesNewId();
 		virtual double murataModularityArgMax(Graph &g,int &communityId, int possibleCoClusterMateId)=0;
 		virtual double murataModularityWithChanges(Graph &g,MetaNode &node, int &communityId, int possibleCoClusterMateId,int &newCommunityId,int &option)=0;
-		virtual double CoClusterMateDefinitionAllCommunities(Graph &g)=0;
+		virtual double CoClusterMateDefinitionAllCommunities(Graph &g,int start, int end)=0;
 		virtual newDataCommunity CoClusterMateDefinitionPrecalculation(Graph &g,MetaNode &node, int &communityId, int &newCommunityId,int option)=0;
 		double calculateMaxModularityGainIteration(Graph &g,int* &nodesOrderExecution);
 		newDataCommunity calculateDeltaGainModularity(Graph &g,MetaNode &node, int &communityId, int newCommunityId,int option);

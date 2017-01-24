@@ -49,7 +49,7 @@ class biLouvainMethodMurataPN : public biLouvainMethod
 		double murataModularityArgMax(Graph &g,int &communityId, int possibleCoClusterMateId);
 		double murataModularityWithChanges(Graph &g,MetaNode &node, int &communityId, int possibleCoClusterMateId,int &newCommunityId,int &option);
 		newDataCommunityVector murataCalculationCoClusterMates(Graph &g,int communityId,const std::vector<int> &possibleCoClusterMates);
-		double CoClusterMateDefinitionAllCommunities(Graph &g);
+		double CoClusterMateDefinitionAllCommunities(Graph &g, int start, int end);
 		void CoClusterMateDefinitionIDCommunity(Graph &g,int &communityId);
 		newDataCommunity CoClusterMateDefinitionPrecalculation(Graph &g,MetaNode &node, int &communityId, int &newCommunityId,int option);
 

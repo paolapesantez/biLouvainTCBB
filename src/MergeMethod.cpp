@@ -41,117 +41,65 @@ MergeMethod::MergeMethod():biLouvainMethodMurataPN()
 }
 MergeMethod::~MergeMethod(){}
 
-std::map<int,std::vector<int>> MergeMethod::mergeMethodCalculation(Graph &g)
+void MergeMethod::mergeCommunities(Graph &g,int start,int end)
 {
-	std::map<int,std::vector<int>> communitiesToMerge;
-	int communitiesKey[_numberCommunities];
-	int startFor = 0;
-	int endFor = g._lastIdPartitionV1+1;
 	int maxIntersection = 0;
-	int key = 0;
-	std::vector<int> a;
-	std::vector<int> b;
-
-	initialCommunityDefinition(g);  						//each node belongs to its individual community
-	initialCommunityNeighborsDefinition(g);					//defining neighbor communities
-	double totalModularity = CoClusterMateDefinitionAllCommunities(g); 	//assign the cocluster mate community(ies) to each community
-
-	for(int i=0;i<_numberCommunities;i++)
+        int key = 0;
+        std::vector<int> a;
+        std::vector<int> b;
+	std::vector<int> c;
+	std::vector<int> coClusterMate;
+	double totalModularity = CoClusterMateDefinitionAllCommunities(g,start,end);
+	for(int i=start;i<end;i++)
 	{
-		if(i > g._lastIdPartitionV1)
-		{
-			startFor = g._lastIdPartitionV1+1;
-			endFor = _numberCommunities;
-		}
-
-		maxIntersection = 0;
-		key = i;
-		//StringSplitter::printVector(_communities[i].getCorrespondenceCommunityId());
-		a =  _communities[i].getCoClusterMateCommunityId();
-		std::unordered_set<int> c(a.begin(),a.end());
-		//for(int j=startFor;j<endFor;j++)
-		for(int j=startFor;j<i;j++)
-		{
-			//if(i!=j)
-			//{
-				b = _communities[j].getCoClusterMateCommunityId();
-				int intersection = std::count_if(b.begin(),b.end(),[&](int k){return c.find(k) != c.end();});
-				//set_intersection(_communities[j].getCoClusterMateCommunityId().begin(),_communities[j].getCoClusterMateCommunityId().end(),_communities[i].getCoClusterMateCommunityId().begin(),_communities[i].getCoClusterMateCommunityId().end(),back_inserter(intersection));
-				if(intersection > maxIntersection)
-				{
-					key = j;
-					maxIntersection = intersection;
-				}
-			//}
-			b.clear();
-		}
-		a.clear();
-		//if(i != communitiesKey[key])
-		//{
-			communitiesKey[i] = key;
-			communitiesToMerge[key].push_back(i);
-		/*}
-		else
-		{
-			communitiesToMerge[i].push_back(i);
-			communitiesKey[i] = i;
-		}*/
-		//std::cout << "\nCommunity: " << i << "   Key:  " << key << std::endl;
+	 maxIntersection = 0;
+         key = i;
+         a =  _communities[i].getCoClusterMateCommunityId();
+         //std::unordered_set<int> c(a.begin(),a.end());
+         for(int j=start;j<i;j++)
+         {
+         	//std::cout << "\nCommunity: " << j << "\t Number Nodes: " << _communities[j].getNumberNodes() << std::endl;
+                if(_communities[j].getNumberNodes()>0)
+                {
+                	b = _communities[j].getCoClusterMateCommunityId();
+                        //int intersection = std::count_if(b.begin(),b.end(),[&](int k){return c.find(k) != c.end();});
+			set_intersection(a.begin(),a.end(),b.begin(),b.end(),back_inserter(c));
+                        if(c.size() > maxIntersection)
+                        {
+                        	key = j;
+                                maxIntersection = c.size();
+				coClusterMate.clear();
+				coClusterMate = c;
+                        }
+                        b.clear();
+			c.clear();
+                        //std::cout << "\nCommunity Comparison: " << j << "\t Inter: " << intersection << std::endl;
+                }
+         }
+         a.clear();
+         if(key != i) //we have communities to merge
+         {
+                //update communities
+                updateNodeCommunity(g,g._graph[i].getId(),i,key);
+		_communities[i].setCoClusterMateCommunityId(coClusterMate);
+                //update merged community neighbors
+                // updateNeighborCommunities(g,g._graph[i].getId(),i,key);
+                //update merged community idCoClusters
+         	//CoClusterMateDefinitionIDCommunity(g,key);
+         }
+         //std::cout << "\nCommunity: " << i << "   Key:  " << key << std::endl;
 	}
-	return communitiesToMerge;
 }
 
-
-void MergeMethod::mergeMethodCalculationWithUpdates(Graph &g, std::string outputFileName)
+void MergeMethod::mergeMethodCalculation(Graph &g, std::string outputFileName)
 {
 	//std::map<int,std::vector<int>> communitiesToMerge;
-	int startFor = 0;
-	int maxIntersection = 0;
-	int key = 0;
-	std::vector<int> a;
-	std::vector<int> b;
-
 	initialCommunityDefinition(g);  						//each node belongs to its individual community
 	initialCommunityNeighborsDefinition(g);						//defining neighbor communities
-	double totalModularity = CoClusterMateDefinitionAllCommunities(g); 		//assign the cocluster community(ies) to each community
+	//double totalModularity = CoClusterMateDefinitionAllCommunities(g,0,_numberCommunities); 		//assign the cocluster community(ies) to each community
 	
-	for(int i=0;i<_numberCommunities;i++)
-	{
-		if(i > g._lastIdPartitionV1)
-			startFor = g._lastIdPartitionV1+1;
-		maxIntersection = 0;
-		key = i;
-		a =  _communities[i].getCoClusterMateCommunityId();
-		std::unordered_set<int> c(a.begin(),a.end());
-		for(int j=startFor;j<i;j++)
-		{
-			//std::cout << "\nCommunity: " << j << "\t Number Nodes: " << _communities[j].getNumberNodes() << std::endl;
-			if(_communities[j].getNumberNodes()>0)
-			{
-				b = _communities[j].getCoClusterMateCommunityId();
-				int intersection = std::count_if(b.begin(),b.end(),[&](int k){return c.find(k) != c.end();});
-				//set_intersection(_communities[j].getCoClusterMateCommunityId().begin(),_communities[j].getCoClusterMateCommunityId().end(),_communities[i].getCoClusterMateCommunityId().begin(),_communities[i].getCoClusterMateCommunityId().end(),back_inserter(intersection));
-				if(intersection > maxIntersection)
-				{
-					key = j;
-					maxIntersection = intersection;
-				}
-				b.clear();
-				//std::cout << "\nCommunity Comparison: " << j << "\t Inter: " << intersection << std::endl;
-			}
-		}
-		a.clear();
-		if(key != i) //we have communities to merge
-		{
-			//update communities
-			updateNodeCommunity(g,g._graph[i].getId(),i,key);
-			//update merged community neighbors
-			updateNeighborCommunities(g,g._graph[i].getId(),i,key);
-			//update merged community idCoClusters
-			CoClusterMateDefinitionIDCommunity(g,key);
-		}
-		//std::cout << "\nCommunity: " << i << "   Key:  " << key << std::endl;
-	}
+	mergeCommunities(g,0,g._lastIdPartitionV1+1);
+	mergeCommunities(g,g._lastIdPartitionV1+1,_numberCommunities);
 	std::stringstream initialCommunities;
         std::ofstream outputFile;
         outputFile.open(outputFileName.c_str(),std::ios::out|std::ios::trunc);
@@ -315,7 +263,7 @@ void MergeMethod::mergeMethodFile(Graph &g,const std::string &inputFileName)
 	if(inputFile.is_open())
 		initialCommunityDefinitionProvidedFileCommunities(g,outputFileName);
 	else
-		mergeMethodCalculationWithUpdates(g,outputFileName);
+		mergeMethodCalculation(g,outputFileName);
 	gettimeofday(&endTime,NULL);
 	mergingTime = (endTime.tv_sec - startTime.tv_sec)*1000000 + (endTime.tv_usec - startTime.tv_usec);
 }
