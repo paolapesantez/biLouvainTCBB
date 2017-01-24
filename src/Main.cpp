@@ -35,7 +35,7 @@
 #include "PreProcessInputBipartiteGraph.h"
 #include "Graph.h"
 #include "LoadGraph.h"
-#include "MergeMethod.h"
+#include "FuseMethod.h"
 #include "biLouvainMethod.h"
 #include "biLouvainMethodMurataPN.h"
 #include "Timer.h"
@@ -46,7 +46,7 @@ static std::string initialCommunitiesFileName = "";
 static std::string outputFileName = "";
 static std::string delimiter = "\t";
 static int optionOrder = 3;
-static int merge = 1;
+static int fuse = 1;
 static double cutoffIterations = 0.01;
 static double cutoffPhases =  0.0;
 static int flag;
@@ -59,7 +59,7 @@ static struct option longopts[] = {
    { "cp",		required_argument,&flag,2},
    { "order",		required_argument,&flag,3},
    { "initial",		required_argument,&flag,4},
-   { "merge",		required_argument,&flag,5},
+   { "fuse",		required_argument,&flag,5},
    { "output",		required_argument,0,'o'},
    { 0, 0, 0, 0 }
 };
@@ -99,13 +99,13 @@ int main(int argc, char *argv[])
                         if (pass == 0)
                          {                            
                                 std::cout << "\n ::: Done Loading Bipartite Graph :::";
-				MergeMethod m;
-                                if(merge == 1)
-                                        m.mergeMethodFile(*graph,bipartiteFileName);
+				FuseMethod f;
+                                if(fuse == 1)
+                                        f.fuseMethodFile(*graph,bipartiteFileName);
                                 else
                                 {
                                         if(initialCommunitiesFileName.empty()==false)
-                                                m.initialCommunityDefinitionProvidedFileCommunities(*graph,initialCommunitiesFileName);
+                                                f.initialCommunityDefinitionProvidedFileCommunities(*graph,initialCommunitiesFileName);
                                 }
 				std::cout << "\n ::: Starting biLouvain Algorithm :::";
 				biLouvainMethodMurataPN biLouvain;
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 				biLouvain.biLouvainMethodAlgorithm(*graph,cutoffIterations,cutoffPhases,optionOrder,bipartiteOriginalEntities,bipartiteFileName,outputFileName);
 				gettimeofday(&endTime,NULL);	
 				double biLouvainAlgorithmTime = (endTime.tv_sec - startTime.tv_sec)*1000000 + (endTime.tv_usec - startTime.tv_usec);
-				biLouvain.printTimes(biLouvainAlgorithmTime,loadGraphTime,m.mergingTime);				
+				biLouvain.printTimes(biLouvainAlgorithmTime,loadGraphTime,f.fusingTime);				
 				graph->destroyGraph();
 			}
 			else
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 
 void printUsage()
 {
-	 printf("Usage: -i {inputFile} -d {delimiter (\" \",\",\",\"\\t\")} [-ci {cutoff iterations(default=0.01)} -cp {cutoff phases(default=0.0)} -order {1:Sequential, 2:Alternate, 3:Random(default=3)} -initial {initialCommuitiesFile}(default=\"\") -merge {0/1 flag(default=1)} -o {outputFileName(default=input_Results*)}]\n");  
+	 printf("Usage: -i {inputFile} -d {delimiter (\" \",\",\",\"\\t\")} [-ci {cutoff iterations(default=0.01)} -cp {cutoff phases(default=0.0)} -order {1:Sequential, 2:Alternate, 3:Random(default=3)} -initial {initialCommuitiesFile}(default=\"\") -fuse {0/1 flag(default=1)} -o {outputFileName(default=input_Results*)}]\n");  
          exit(EXIT_FAILURE);
 }
 
@@ -203,7 +203,7 @@ void parseCommandLine(const int argc, char * const argv[])
 			else if(*(longopts[indexPtr].flag)==5)
                         {
                                 if(optarg != NULL)
-                                        merge = atoi(optarg);
+                                        fuse = atoi(optarg);
                         }
 			break;
 		    case ':':

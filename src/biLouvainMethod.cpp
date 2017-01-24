@@ -1064,14 +1064,14 @@ void biLouvainMethod::printCommunityNodesNeighbors(Graph &g,int communityId)
 		printf("\nCommunity doesn't exist \n");
 }
 
-void biLouvainMethod::printTimes(double biLouvainTime, double loadGraphTime, double mergingTime)
+void biLouvainMethod::printTimes(double biLouvainTime, double loadGraphTime, double fusingTime)
 {
 	std::string outputfileTime = _outputFileName + "_ResultsTime.txt";
 	std::ofstream outfileTime;
 	outfileTime.open(outputfileTime.c_str(),std::ios::out|std::ios::trunc);
-	outfileTime << "::: Total Time: " << timeConverter(biLouvainTime+loadGraphTime+mergingTime).c_str() << "microseconds: " << biLouvainTime+loadGraphTime+mergingTime << "\n";
+	outfileTime << "::: Total Time: " << timeConverter(biLouvainTime+loadGraphTime+fusingTime).c_str() << "microseconds: " << biLouvainTime+loadGraphTime+fusingTime << "\n";
 	outfileTime << "\n::: Load Graph Total Time: " << timeConverter(loadGraphTime).c_str() << "microseconds: " << loadGraphTime << "\n";
-	outfileTime << "\n::: Fuse Total Time: " << timeConverter(mergingTime).c_str() << "microseconds: " << mergingTime << "\n";
+	outfileTime << "\n::: Fuse Total Time: " << timeConverter(fusingTime).c_str() << "microseconds: " << fusingTime << "\n";
 	outfileTime << "\n::: biLouvain Algorithm Total Time: " << timeConverter(biLouvainTime).c_str() << "microseconds: " << biLouvainTime << "\n";
 	outfileTime << "\n::: Initial Times :::";
 	outfileTime << "\nInitial Community Time: " + timeConverter(initialCommunityTime);

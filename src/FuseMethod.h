@@ -33,51 +33,30 @@
 
 
 /*
-# Graph.h
-# 
+# FuseMethod.h
+# Preprocessing of the initial communities. If two communities shared cocluster mates in common, then those communities get fused.
 */
 
-#ifndef GRAPH_H_
-#define GRAPH_H_
 
-#include "Header.h"
-#include "MetaNode.h"
+#ifndef FUSEMETHOD_H_
+#define FUSEMETHOD_H_
 
-class Graph
+#include "Graph.h"
+#include "biLouvainMethodMurataPN.h"
+#include <unordered_set>
+
+class FuseMethod : public biLouvainMethodMurataPN
 {
-	friend class biLouvainMethod;
-	friend class biLouvainMethodMurataPN;
-	friend class FuseMethod;
-	protected:
-		MetaNode* _graph;
-		int _numberNodes;
-		int _numberEdges;
-		double _weightEdges;
-		double _weightEdgesV1;
-		double _weightEdgesV2;
-		int _lastIdPartitionV1;
-
 	public:
-		//Class constructor
-		Graph();
-		Graph(MetaNode* &graph,int &numberNodes,int &numberEdges,double &weightEdges,double &weightEdgesV1,double &weightEdgesV2,int &lastIdPartitionV1);
-		//Class destructor
-		~Graph();
-		MetaNode* getGraph();
-		MetaNode getNode(const int &nodeId);
-                int getNumberNodes();
-                int getLastIdPartitionV1();
-                int getNumberEdges();
-                double getWeightEdges();
-                int getNumberEdgesV1();
-                int getNumberEdgesV2();
-                double getWeightEdgesV1();
-                double getWeightEdgesV2();
-                void setNumberCoClusters(int number);
-                void printNeighborsNode(int nodeId);
-		void printGraph(const std::string &inputFileName);
-                void destroyGraph();
-
+		FuseMethod();
+		~FuseMethod();
+		double fusingTime;
+		void fuseCommunities(Graph &g,int start,int end);
+		void fuseMethodCalculation(Graph &g, std::string outputFileName);
+		void initialCommunityDefinitionProvidedFileCommunities(Graph &g,const std::string &initialCommunitiesFileName);
+		void initialCommunityDefinitionProvidedFileMetaNodes(Graph &g,const std::string &initialCommunitiesFileName);
+		void fuseMethodFile(Graph &g,const std::string &inputFileName);
 };
 
-#endif /* GRAPH_H_ */
+
+#endif /* FUSEMETHOD_H_ */

@@ -7,7 +7,7 @@ OPTFLAGS = -Ofast
 CFLAGS = $(OPTFLAGS)
 CXXFLAGS = $(CFLAGS) -std=c++0x -DUSE_32_BIT_GRAPH
 
-GOBJFILES = Main.o Timer.o Graph.o Node.o MetaNode.o Community.o biLouvainMethod.o biLouvainMethodMurataPN.o MergeMethod.o
+GOBJFILES = Main.o Timer.o Graph.o Node.o MetaNode.o Community.o biLouvainMethod.o biLouvainMethodMurataPN.o FuseMethod.o
 
 
 GTARGET = biLouvain
