@@ -14,6 +14,7 @@ Our biLouvain algorithm uses a variant of the bipartite modularity function defi
 Once the communities have been obtained the next steps are analysis and interpretation of them. These domain specific tasks have direct impact on other studies for example: in the case of the gene-drug network we could identify groups of drugs that might inhibit or otherwise modulate groups of genes. We also could detect groups of genes that are suitable for drug targeting but may not currently have a drug targeting them. Similarly, for plant-pollinator networks we could identify groups of pollinators that limit or promote plant species establishment and persistence.
 
 For further details about Murata+ definition and biLouvain algorithm please refer to:
+
                   Pesantez-Cabrera, Paola, and Ananth Kalyanaraman. "Detecting Communities in Biological Bipartite Networks." 
                   Proceedings of the 7th ACM International Conference on Bioinformatics, Computational Biology, and Health Informatics.
                   ACM, 2016., DOI: http://dx.doi.org/10.1145/2975167.2975177.
