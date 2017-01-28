@@ -7,9 +7,9 @@ biLouvain is an algorithm for detecting communities in bipartite networks throug
 For details regarding the algorithmic approach and the modularity metric that defines quality of of the resultant communities,
 we urge you to refer to our paper: 
 				 Pesantez-Cabrera, Paola, and Ananth Kalyanaraman. 
-				 "Detecting Communities in Biological Bipartite Networks."
-				 Proceedings of the 7th ACM International Conference on Bioinformatics, Computational Biology, 
-				 and Health Informatics. ACM, 2016.
+				 "Detecting Communities in Biological Bipartite Networks." 
+				 In Proceedings of the 7th ACM International Conference on Bioinformatics, Computational Biology, 
+				 and Health Informatics, pp. 98-107. ACM, 2016.
 
 Generate Executable:
 	We provide a makefile inside /src folder so you can compile the code.
