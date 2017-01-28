@@ -15,9 +15,7 @@ Once the communities have been obtained the next steps are analysis and interpre
 
 For further details about Murata+ definition and biLouvain algorithm please refer to:
 
-                  Pesantez-Cabrera, Paola, and Ananth Kalyanaraman. "Detecting Communities in Biological Bipartite Networks." 
-                  Proceedings of the 7th ACM International Conference on Bioinformatics, Computational Biology, and Health Informatics.
-                  ACM, 2016., DOI: http://dx.doi.org/10.1145/2975167.2975177.
+**Pesantez-Cabrera, Paola, and Ananth Kalyanaraman. "Detecting Communities in Biological Bipartite Networks." In Proceedings of the 7th ACM International Conference on Bioinformatics, Computational Biology, and Health Informatics, pp. 98-107. ACM, 2016., DOI: http://dx.doi.org/10.1145/2975167.2975177.**
   
 # Contact
 Paola Gabriela Pesantez-Cabrera, Ananth Kalyanaraman (p.pesantezcabrera@wsu.edu, ananth@eecs.wsu.edu)
