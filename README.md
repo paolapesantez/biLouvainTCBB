@@ -1,5 +1,5 @@
 
-<center>![alt text](https://raw.githubusercontent.com/paolapesantez/biLouvain/master/logobiLouvain.png)
+<center>![biLouvain](https://github.com/paolapesantez/biLouvain/raw/master/logobiLouvain.png)
 
 
 C++ code for detection of communities in bipartite networks.
