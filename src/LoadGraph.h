@@ -69,18 +69,16 @@ class LoadGraph
 		if(is_good)						//If the file has been found
 		{
 			std::string line = "";
-			while(inputFile.good())
-                        {
-                                getline(inputFile,line);
-                                int location = line.find("\t");
-                                if(location == std::string::npos)
-                                {
-                                        printf("\n ::: The bipartite file should be tab delimited :::\n");
-                                        exit(EXIT_FAILURE);
-                                }
-                                break;
-                        }
+			getline(inputFile,line);
+			int location = line.find("\t");
+			if(location == std::string::npos)
+			{
+				printf("\n ::: The bipartite file should be tab delimited :::\n");
+				exit(EXIT_FAILURE);
+			}
 			//Getting the maximum id which will indicate us the number of nodes in the bipartite graph
+			inputFile.clear();
+			inputFile.seekg(0, std::ios::beg);
 			int maximumId = 0;
 			int items = 0;
 			std::string* pieces;
