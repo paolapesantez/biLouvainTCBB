@@ -118,7 +118,7 @@ void FuseMethod::fuseMethodCalculation(Graph &g, std::string outputFileName)
         }
         outputFile.close();
 	fromCommunitiesToNodes(g);
-	std::cout<<"\n"<<g._lastIdPartitionV1+1<<"\t"<<g._numberNodes-(g._lastIdPartitionV1+1)<<"\t"<<g._numberNodes<<std::endl;
+	std::cout<<"\n ::: Fuse "<<g._lastIdPartitionV1+1<<"\t"<<g._numberNodes-(g._lastIdPartitionV1+1)<<"\t"<<g._numberNodes<<"\t"<<g._numberEdges<<std::endl;
 	//for(int i=0;i<g._numberNodes;i++)
         //        std::cout << g._graph[i].getId()<< "\t" << g._graph[i].getDegreeNode()<<std::endl;
 }
@@ -164,7 +164,7 @@ void FuseMethod::initialCommunityDefinitionProvidedFileCommunities(Graph &g,cons
                 delete[] nodes;
                 initialCommunitiesFile.close();
 		fromCommunitiesToNodes(g);
-		std::cout<<"\n"<<g._lastIdPartitionV1+1<<"\t"<<g._numberNodes-(g._lastIdPartitionV1+1)<<"\t"<<g._numberNodes<<std::endl;
+		std::cout<<"\n ::: Fuse "<<g._lastIdPartitionV1+1<<"\t"<<g._numberNodes-(g._lastIdPartitionV1+1)<<"\t"<<g._numberNodes<<"\t"<<g._numberEdges<<std::endl;
 	        //for(int i=0;i<g._numberNodes;i++)
                 //      std::cout << g._graph[i].getId()<< "\t" << g._graph[i].getDegreeNode()<<std::endl;
         }
@@ -237,7 +237,7 @@ void FuseMethod::initialCommunityDefinitionProvidedFileMetaNodes(Graph &g,const 
 		Graph compactedGraph(_newGraph,numberCommunities,g._numberEdges,g._weightEdges,g._weightEdgesV1,g._weightEdgesV2,lastIdPartitionV1);
 		g.destroyGraph();
 	        g = compactedGraph;
-		std::cout<<g._lastIdPartitionV1+1<<"\t"<<g._numberNodes-(g._lastIdPartitionV1+1)<<"\t"<<g._numberNodes<<std::endl;
+		std::cout<<"\n ::: Fuse "<<g._lastIdPartitionV1+1<<"\t"<<g._numberNodes-(g._lastIdPartitionV1+1)<<"\t"<<g._numberNodes<<"\t"<<g._numberEdges<<std::endl;
                 //for(int i=0;i<g._numberNodes;i++)
                 //      std::cout << g._graph[i].getId()<< "\t" << g._graph[i].getDegreeNode()<<std::endl;
         }
