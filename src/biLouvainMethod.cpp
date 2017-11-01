@@ -362,12 +362,12 @@ int biLouvainMethod::numberCommunitiesNonEmpty()
 void biLouvainMethod::fromCommunitiesToNodes(Graph &g)
 {
 	int lastIdPartitionV1 = -1;
-	int numberNodes = numberCommunitiesNonEmpty();
+	std::tr1::unordered_map<int,int> dictionaryCommunities = dictionaryCommunitiesNewId();
+	int numberNodes = dictionaryCommunities.size();
 	MetaNode*_newGraph = new MetaNode[numberNodes];
 	std::vector<Node> nodes;
 	std::tr1::unordered_map<int,long double> neighborsTemp;
 	std::tr1::unordered_map<int,double> neighbors;
-	std::tr1::unordered_map<int,int> dictionaryCommunities = dictionaryCommunitiesNewId();
 	std::tr1::unordered_map<int,long double> errorCalculation;
 	//std::cout << _numberNodes << " " << dictionaryCommunities.size() << std::endl;
 	int id =0;
