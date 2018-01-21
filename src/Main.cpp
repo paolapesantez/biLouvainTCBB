@@ -73,14 +73,28 @@ int main(int argc, char *argv[])
 		struct timeval startTime,endTime;	
 		std::ifstream infile(inputFileName.c_str());
 		//std::cout<<inputFileName<<std::endl;
-		if(infile.is_open()==true)
-		{
-			std::cout << "\n ::: Loading Bipartite Graph " << inputFileName << " :::";
-			std::string bipartiteFileName;
+		int items = 0;
+                bool band = false;
+                if(infile.is_open()==true)
+                {
+                        std::cout << "\n ::: Loading Bipartite Graph " << inputFileName << " :::";
+                        std::string bipartiteFileName;
                         std::tr1::unordered_map<int,std::string> bipartiteOriginalEntities;
-                        if(inputFileName.find("_bipartite") == std::string::npos)
+                        //if((inputFileName.find("bipartite") == std::string::npos)||(inputFileName.find("Bipartite") == std::string::npos))
+                        std::string* pieces;
+                        pieces = StringSplitter::split(inputFileName,"bipartite",items);
+                        if(items != 0)
+                                band = true;
+                        else
                         {
-				int pos = inputFileName.find(".");
+                                pieces = StringSplitter::split(inputFileName,"Bipartite",items);
+                                if(items != 0)
+                                        band = true;
+                        }
+                        delete[] pieces;
+                        if(band == false)
+                        {
+	          		int pos = inputFileName.find(".");
                                 bipartiteFileName = inputFileName.substr(0,pos)+"_bipartite.txt";
                                 bipartiteOriginalEntities=PreProcessInputBipartiteGraph::preProcessingGraphData(inputFileName,delimiter);
                         }
