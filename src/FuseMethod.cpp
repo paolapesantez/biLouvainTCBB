@@ -81,6 +81,7 @@ void FuseMethod::fuseCommunities(Graph &g,int start,int end)
          {
                 //update communities
                 updateNodeCommunity(g,g._graph[i].getId(),i,key);
+		updateNeighborCommunities(g,g._graph[i].getId(),i,key);
 		_communities[i].setCoClusterMateCommunityId(coClusterMate);
          }
          //std::cout << "\nCommunity: " << i << "   Key:  " << key << std::endl;
