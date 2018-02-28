@@ -553,7 +553,7 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 		double gainDoble = 0.0;
 		std::stringstream changes;
 		newDataCommunity deltaModularityGain;
-		double maxDeltaModularityGain = -1.0;
+		double maxDeltaModularityGain = 0.0;
 		double totalDeltaModularityGain = 0.0;
 		int currentCommunity = g._graph[nodesOrderExecution[i]].getCommunityId();
 		//Find CANDIDATE COMMUNITIES to which node i can move to
@@ -618,21 +618,12 @@ double biLouvainMethod::calculateMaxModularityGainIteration(Graph &g,int* &nodes
 				        //candidateDeltaModularityGain += deltaModularityGain.newModularityContribution - (gainDoble - stof(gainString.str()));	
 					candidateDeltaModularityGain += deltaModularityGain.newModularityContribution;
 				}
-				if(j==0)
+				if(candidateDeltaModularityGain > maxDeltaModularityGain)
 				{
 					maxDeltaModularityGain = candidateDeltaModularityGain;
-					candidateCommunity = candidates[0];
+					candidateCommunity = candidates[j];
+					maxChangesCandidate.str("");
 					maxChangesCandidate << temp.str();
-				}
-				else
-				{
-					if(candidateDeltaModularityGain > maxDeltaModularityGain)
-					{
-						maxDeltaModularityGain = candidateDeltaModularityGain;
-						candidateCommunity = candidates[j];
-						maxChangesCandidate.str("");
-						maxChangesCandidate << temp.str();
-					}
 				}
 			}
 			candidates.clear();
