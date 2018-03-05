@@ -120,11 +120,9 @@ int main(int argc, char *argv[])
                          {                            
                                 std::cout << "\n ::: Done Loading Bipartite Graph :::";
 				FuseMethod f;
-                                if(fuse == 1)
+                                if((fuse == 1)&&(initialCommunitiesFileName.empty()==true))
                                         f.fuseMethodFile(*graph,bipartiteFileName);
-                                else
-                                {
-                                        if(initialCommunitiesFileName.empty()==false)
+                                else if((fuse == 1)&&(initialCommunitiesFileName.empty()==false))
                                                 f.initialCommunityDefinitionProvidedFileCommunities(*graph,initialCommunitiesFileName);
                                 }
 				std::cout << "\n ::: Starting biLouvain Algorithm :::";
