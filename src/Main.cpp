@@ -123,8 +123,7 @@ int main(int argc, char *argv[])
                                 if((fuse == 1)&&(initialCommunitiesFileName.empty()==true))
                                         f.fuseMethodFile(*graph,bipartiteFileName);
                                 else if((fuse == 1)&&(initialCommunitiesFileName.empty()==false))
-                                                f.initialCommunityDefinitionProvidedFileCommunities(*graph,initialCommunitiesFileName);
-                                }
+                                        f.initialCommunityDefinitionProvidedFileCommunities(*graph,initialCommunitiesFileName);
 				std::cout << "\n ::: Starting biLouvain Algorithm :::";
 				biLouvainMethodMurataPN biLouvain;
 				gettimeofday(&startTime,NULL);							
