@@ -18,7 +18,7 @@ Generate Executable:
 Usage: 
 	./biLouvain -i {inputFileName} -d {delimiterInputFile} -ci {cutoffIterations (defautl=0.01)} -cp {cutoffPhases (default=0.0)} 
 		   -oder {1:Sequential 2:Alternate 3:Random (default=3)} -initial {initialCommunitiesFileName} 
-		   -merge {0/1:flag (default=1)} -o {outputFileName (default=inputFileName_Results*)}
+		   -fuse {0/1:flag (default=1)} -o {outputFileName (default=inputFileName_Results*)}
 
 biLouvain input File:
 			Please provide a edge list formated file separated by space, comma, or tabular.
@@ -31,7 +31,7 @@ biLouvain Outputs:
 				inputFileName_bipartite.txt: Will have a tab separated edge list of Ids.
 				inputFileName_bipartite_Dictionary.txt: Will have mapping of node names to node ids.
 				
-			merge is set to 1, therefore a file is going to be created:
+			fuse is set to 1, therefore a file is going to be created:
 				inputFileName_bipartite_InitialCommunities.txt
 
 			biLouvain execution will create the following files:
@@ -43,7 +43,7 @@ biLouvain Outputs:
 			Note: if outputFileName was not provided, then biLouvain will return inputFileName_bipartite_Results.
 	
 Description of options:
-   -i 		Required.
+   -i 		Required. Input file name.
 		We will preprocess the input file to put it in the format required for biLouvain.
 		For the edge list in the example the result will be:
 			0	2	1
