@@ -39,8 +39,8 @@ biLouvainMethodMurataPN::~biLouvainMethodMurataPN(){}
 
 double biLouvainMethodMurataPN::murataModularityArgMax(Graph &g,int &communityId, int possibleCoClusterMateId)
 {
-	double al = (double)_communities[communityId].getDegreeCommunity();
-	double am = (double)_communities[possibleCoClusterMateId].getDegreeCommunity();
+	double al = _communities[communityId].getDegreeCommunity();
+	double am = _communities[possibleCoClusterMateId].getDegreeCommunity();
 	double murataModularity = 0.0;
 	//printf("\nCommunity ID: %d \n",communityId);
 	//printf("AL: %f AM: %f  Edges V1: %d Edges V2: %d  Total edges: %d\n",al,am,_number_edges_V1,_number_edges_V2,_number_edges);
@@ -66,35 +66,35 @@ double biLouvainMethodMurataPN::murataModularityWithChanges(Graph &g,MetaNode &n
 	{
 		case 1: // For Ci community
 		{
-			al = (double)_communities[communityId].getDegreeCommunityWithoutNode(node.getId());
-			am = (double)_communities[possibleCoClusterMateId].getDegreeCommunity();
+			al = _communities[communityId].getDegreeCommunityWithoutNode(node.getId());
+			am = _communities[possibleCoClusterMateId].getDegreeCommunity();
 			elm = ((double)1/(2*g._weightEdges)) * (calculateEdgesBetweenCommunitiesMap(g,communityId,possibleCoClusterMateId)-node.getWeightEdgesToNeighborCommunity(possibleCoClusterMateId));
 			break;
 		}
 		case 2: // For Cj community
 		{
-			al = (double)_communities[communityId].getDegreeCommunity() + node.getDegreeNode();
-			am = (double)_communities[possibleCoClusterMateId].getDegreeCommunity();
+			al = _communities[communityId].getDegreeCommunity() + node.getDegreeNode();
+			am = _communities[possibleCoClusterMateId].getDegreeCommunity();
 			elm = ((double)1/(2*g._weightEdges)) * (calculateEdgesBetweenCommunitiesMap(g,communityId,possibleCoClusterMateId)+node.getWeightEdgesToNeighborCommunity(possibleCoClusterMateId));
 			break;
 		}
 		case 3: case 4: // For Di community which is a cocluster of Ci
 		{
 			nodeCommunity = node.getCommunityId();
-			al = (double)_communities[communityId].getDegreeCommunity();
+			al = _communities[communityId].getDegreeCommunity();
 			if(possibleCoClusterMateId == nodeCommunity)
 			{
-				am = (double)_communities[possibleCoClusterMateId].getDegreeCommunity() - (double)node.getDegreeNode();
+				am = _communities[possibleCoClusterMateId].getDegreeCommunity() - node.getDegreeNode();
 				elm = ((double)1/(2*g._weightEdges)) * (calculateEdgesBetweenCommunitiesMap(g,communityId,possibleCoClusterMateId)-node.getWeightEdgesToNeighborCommunity(communityId));
 			}
 			else if(possibleCoClusterMateId == newCommunityId)
 			{
-				am = (double)_communities[possibleCoClusterMateId].getDegreeCommunity() + (double)node.getDegreeNode();
+				am = _communities[possibleCoClusterMateId].getDegreeCommunity() + node.getDegreeNode();
 				elm = ((double)1/(2*g._weightEdges)) * (calculateEdgesBetweenCommunitiesMap(g,communityId,possibleCoClusterMateId)+node.getWeightEdgesToNeighborCommunity(communityId));
 			}
 			else
 			{
-				am = (double)_communities[possibleCoClusterMateId].getDegreeCommunity();
+				am = _communities[possibleCoClusterMateId].getDegreeCommunity();
 				elm = ((double)1/(2*g._weightEdges)) * (calculateEdgesBetweenCommunitiesMap(g,communityId,possibleCoClusterMateId));
 			}
 			break;
