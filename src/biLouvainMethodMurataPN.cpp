@@ -44,15 +44,9 @@ double biLouvainMethodMurataPN::murataModularityArgMax(Graph &g,int &communityId
 	double murataModularity = 0.0;
 	//printf("\nCommunity ID: %d \n",communityId);
 	//printf("AL: %f AM: %f  Edges V1: %d Edges V2: %d  Total edges: %d\n",al,am,_number_edges_V1,_number_edges_V2,_number_edges);
-	if(_communities[communityId].getDescription()=="V1")
-	{	al = al/(2*g._weightEdgesV1);
-		am = am /(2*g._weightEdgesV2);
-	}
-	else
-	{	al = al /(2*g._weightEdgesV2);
-		am = am / (2*g._weightEdgesV1);
-	}
-
+	al = al/(2*g._weightEdges);
+	am = am /(2*g._weightEdges);
+	
 	double elm = ((double)1/(2*g._weightEdges)) * calculateEdgesBetweenCommunitiesMap(g,communityId,possibleCoClusterMateId);
 	//printf("AM: %f  AL: %f  Edges V1: %d Edges V2: %d  Total edges: %d Edges between Communities:%f \n",am,al,_number_edges_V1,_number_edges_V2,_number_edges,calculateEdgesBetweenCommunitiesMap(communityId,possibleCoClusterMateId));
 	murataModularity = elm-(al*am);
@@ -106,14 +100,9 @@ double biLouvainMethodMurataPN::murataModularityWithChanges(Graph &g,MetaNode &n
 			break;
 		}
 	}
-	if(_communities[communityId].getDescription()=="V1")
-	{	al = al/(2*g._weightEdgesV1);
-		am = am /(2*g._weightEdgesV2);
-	}
-	else
-	{	al = al /(2*g._weightEdgesV2);
-		am = am / (2*g._weightEdgesV1);
-	}
+	al = al /(2*g._weightEdges);
+	am = am / (2*g._weightEdges);
+	
 	//printf("AM: %f  AL: %f  Total edges: %d Edges between Communities:%d \n",am,al,_number_edges,calculateEdgesBetweenCommunities(g,communityId,possibleCoClusterMateId));
 	murataModularity = elm-(al*am);
 	//printf("Possible cocluster mate ID: %d  Murata Modularity: %f \n",possibleCoClusterMateId,murataModularity);
