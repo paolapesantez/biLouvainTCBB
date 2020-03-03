@@ -6,7 +6,7 @@ Authors: Paola Pesantez-Cabrera and Ananth Kalyanaraman
 biLouvain is an algorithm for detecting communities in bipartite networks through optimization of a modularity metric.
 For details regarding the algorithmic approach and the modularity metric that defines quality of of the resultant communities,
 we urge you to refer to our paper: 
-				 Pesantez-Cabrera, Paola, and Ananth Kalyanaraman. 
+				 Paola Pesantez-Cabrera and Ananth Kalyanaraman. 
 				 "Detecting Communities in Biological Bipartite Networks." 
 				 In Proceedings of the 7th ACM International Conference on Bioinformatics, Computational Biology, 
 				 and Health Informatics, pp. 98-107. ACM, 2016.
